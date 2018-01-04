@@ -1,2 +1,3 @@
 # bsIO
-BattleShip game
+
+Игра на html5,css3,go
