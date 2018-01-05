@@ -28,5 +28,5 @@ func main() {
 
 // Greetings says hello in browser's window
 func Greetings(w http.ResponseWriter, r *http.Request) {
-	homeTmp.Execute(w, Context{"Doc", "Alesha"})
+	homeTmp.Execute(w, Context{"Doc", "Андрей"})
 }
