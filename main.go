@@ -11,7 +11,6 @@ var homeTmp *template.Template
 // Context is struct for template
 type Context struct {
 	Title string
-	Name  string
 }
 
 func main() {
@@ -28,5 +27,5 @@ func main() {
 
 // Greetings says hello in browser's window
 func Greetings(w http.ResponseWriter, r *http.Request) {
-	homeTmp.Execute(w, Context{"Doc", "Андрей"})
+	homeTmp.Execute(w, Context{"bsIO"})
 }

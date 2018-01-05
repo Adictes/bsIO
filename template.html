@@ -2,36 +2,300 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>{{.Title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <style>
-        table {
-            border: 1px solid rgb(255, 0, 0);
-            border-spacing: 3px;
+        header {
+            padding-top: 5px;
+            padding-bottom: 10px;
         }
-        td, th{
-            border: solid 1px rgb(189, 189, 189);
+        footer {
+            padding: 10px;
+            text-align: initial;
         }
-    h1{
-        color:rgba(25, 0, 255, 0.281);
-    }
-        </style>
+        span {
+            text-align: center;
+        }
+        h3 {
+            text-align: center;
+        }
+        .nickname {
+            padding-bottom: 5px;
+            text-align: center;
+        }
+    </style>
+    <title>{{.Title}}</title>
 </head>
-<body> 
-    <h1>Hello, {{.Name}}</h1>
-    <table>
-
-        <tr><th>0/ё</th><th>А</th><th>Б</th><th>В</th><th>Г</th><th>Д</th><th>Е</th><th>Ё</th><th>Ж</th><th>З</th><th>И</th></tr>
-        <tr><th>1</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>2</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>3</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>4</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr> 
-        <tr><th>5</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>6</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>7</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>8</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>9</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-        <tr><th>10</th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-                
-    </table>
+<body>
+    <header class="conteiner-fluid">
+        <h3>Welcome to the BattleShip.io</h3>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="container-fluid">
+                    <div class="nickname"> Собственный ник </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-condensed table-bordered">
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                            <td>7</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                            <td>9</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                            <td>10</td>
+                        </tr>
+                    </table>
+                </div>  
+                <div class="container-fluid">
+                    <div class="nickname"> Ник соперника </div>
+                </div>
+                <div class="table-responsive">
+                        <table class="table table-condensed table-bordered">
+                            <tr>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                                <td>6</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                                <td>7</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                                <td>8</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                                <td>9</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                                <td>10</td>
+                            </tr>
+                        </table>
+                    </div>
+            </div>
+            <div class="well col-md-4">
+                Тут будет кораблики и всякие кнопки
+            </div>
+            <div class="well col-md-4">
+                Тут чат
+            </div>
+        </div>
+    </div>
+    <footer class="container-fluid"> Made by Adictes </footer>
 </body>
 </html>
