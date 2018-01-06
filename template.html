@@ -4,6 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script>
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    </script>
     <style>
         header {
             padding-top: 5px;
@@ -13,8 +28,18 @@
             padding: 10px;
             text-align: initial;
         }
-        span {
-            text-align: center;
+        table {
+            border-collapse: collapse;
+            border: 1px solid gainsboro;
+            height: 380px;
+            width: 380px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        td {
+            height: 37.9px !important;
+            width: 37.9px !important;
+            border: 1px solid gainsboro;
         }
         h3 {
             text-align: center;
@@ -22,6 +47,11 @@
         .nickname {
             padding-bottom: 5px;
             text-align: center;
+        }
+        .ship-1 {
+            width: 37.9px;
+            height: 37.9px;
+            border: 1px solid lightseagreen;
         }
     </style>
     <title>{{.Title}}</title>
@@ -32,266 +62,266 @@
     </header>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-lg-3">
                 <div class="container-fluid">
                     <div class="nickname"> Собственный ник </div>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-condensed table-bordered">
+                <div class="container-fluid">
+                    <table>
                         <tr>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>1</td>
+                            <td id="0-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="0-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
-                            <td>2</td>
+                            <td id="1-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="1-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
-                            <td>3</td>
+                            <td id="2-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="2-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
-                            <td>4</td>
+                            <td id="3-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="3-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
-                            <td>5</td>
+                            <td id="4-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="4-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
-                            <td>6</td>
+                            <td id="5-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="5-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
-                            <td>7</td>
+                            <td id="6-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="6-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
-                            <td>8</td>
+                            <td id="7-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="7-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
-                            <td>9</td>
+                            <td id="8-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="8-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                         <tr>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
-                            <td>10</td>
+                            <td id="9-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                            <td id="9-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
                     </table>
                 </div>  
                 <div class="container-fluid">
                     <div class="nickname"> Ник соперника </div>
                 </div>
-                <div class="table-responsive">
-                        <table class="table table-condensed table-bordered">
-                            <tr>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                                <td>1</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                                <td>4</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                                <td>5</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                                <td>6</td>
-                            </tr>
-                            <tr>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                                <td>7</td>
-                            </tr>
-                            <tr>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                                <td>8</td>
-                            </tr>
-                            <tr>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                                <td>9</td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                                <td>10</td>
-                            </tr>
-                        </table>
-                    </div>
+                <div class="container-fluid">
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
-            <div class="well col-md-4">
-                Тут будет кораблики и всякие кнопки
+            <div class="well col-lg-4">
+                <img id="ship" class="ship-1" src="https://i.imgur.com/EeE1Lsp.gif" ondragstart="drag(event)" draggable="true"></img>
             </div>
-            <div class="well col-md-4">
+            <div class="well col-lg-5">
                 Тут чат
             </div>
         </div>
