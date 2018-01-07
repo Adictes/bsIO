@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-var homeTmp *template.Template
+var t *template.Template
 
 // Context is struct for template
 type Context struct {
@@ -14,10 +14,10 @@ type Context struct {
 }
 
 func main() {
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 	http.HandleFunc("/", Greetings)
 
-	t := template.Must(template.New("Game").ParseFiles("template.html"))
-	homeTmp = t.Lookup("template.html")
+	t = template.Must(template.New("Game").ParseFiles("templates/index.html"))
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
@@ -27,5 +27,5 @@ func main() {
 
 // Greetings says hello in browser's window
 func Greetings(w http.ResponseWriter, r *http.Request) {
-	homeTmp.Execute(w, Context{"bsIO"})
+	t.ExecuteTemplate(w, "index", Context{"bsIO"})
 }

@@ -1,33 +1,25 @@
-header {
-    padding-top: 5px;
-    padding-bottom: 10px;
-}
 footer {
     padding: 10px;
     text-align: initial;
 }
-table {
-    border-collapse: collapse;
-    border: 1px solid gainsboro;
-    height: 380px;
-    width: 380px;
-    margin-left: auto;
-    margin-right: auto;
-}
 td {
     height: 37.9px !important;
     width: 37.9px !important;
-    border: 1px solid gainsboro;
 }
-h3 {
-    text-align: center;
-}
-.nickname {
-    padding-bottom: 5px;
-    text-align: center;
+.table td {
+    padding: 0rem;
 }
 .ship-1 {
-    width: 37.9px;
-    height: 37.9px;
+    padding: 1px; /* Решение #1 issue*/
+    width: 36.9px;
+    height: 36.9px;
     border: 1px solid lightseagreen;
+}
+.table {
+    height: 380px;
+    width: 380px;
+}
+.site {
+    margin: 1rem;
+    padding: 1rem;
 }
