@@ -1,9 +1,11 @@
+{{ define "index" }}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/app.css">
     <script>
         function allowDrop(ev) {
             ev.preventDefault();
@@ -19,41 +21,6 @@
             ev.target.appendChild(document.getElementById(data));
         }
     </script>
-    <style>
-        header {
-            padding-top: 5px;
-            padding-bottom: 10px;
-        }
-        footer {
-            padding: 10px;
-            text-align: initial;
-        }
-        table {
-            border-collapse: collapse;
-            border: 1px solid gainsboro;
-            height: 380px;
-            width: 380px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        td {
-            height: 37.9px !important;
-            width: 37.9px !important;
-            border: 1px solid gainsboro;
-        }
-        h3 {
-            text-align: center;
-        }
-        .nickname {
-            padding-bottom: 5px;
-            text-align: center;
-        }
-        .ship-1 {
-            width: 37.9px;
-            height: 37.9px;
-            border: 1px solid lightseagreen;
-        }
-    </style>
     <title>{{.Title}}</title>
 </head>
 <body>
@@ -66,8 +33,7 @@
                 <div class="container-fluid">
                     <div class="nickname"> Собственный ник </div>
                 </div>
-                <div class="container-fluid">
-                    <table>
+                    <table class="table">
                         <tr>
                             <td id="0-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                             <td id="0-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
@@ -188,8 +154,7 @@
                             <td id="9-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                             <td id="9-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
                         </tr>
-                    </table>
-                </div>  
+                    </table> 
                 <div class="container-fluid">
                     <div class="nickname"> Ник соперника </div>
                 </div>
@@ -319,7 +284,7 @@
                 </div>
             </div>
             <div class="well col-lg-4">
-                <img id="ship" class="ship-1" src="https://i.imgur.com/EeE1Lsp.gif" ondragstart="drag(event)" draggable="true"></img>
+                <img id="ship" class="ship-1" src="../assets/img/EeE1Lsp.gif" ondragstart="drag(event)" draggable="true"></img>
             </div>
             <div class="well col-lg-5">
                 Тут чат
@@ -329,3 +294,4 @@
     <footer class="container-fluid"> Made by Adictes </footer>
 </body>
 </html>
+{{ end }}

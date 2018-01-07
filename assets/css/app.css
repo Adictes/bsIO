@@ -1,0 +1,33 @@
+header {
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+footer {
+    padding: 10px;
+    text-align: initial;
+}
+table {
+    border-collapse: collapse;
+    border: 1px solid gainsboro;
+    height: 380px;
+    width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+}
+td {
+    height: 37.9px !important;
+    width: 37.9px !important;
+    border: 1px solid gainsboro;
+}
+h3 {
+    text-align: center;
+}
+.nickname {
+    padding-bottom: 5px;
+    text-align: center;
+}
+.ship-1 {
+    width: 37.9px;
+    height: 37.9px;
+    border: 1px solid lightseagreen;
+}
