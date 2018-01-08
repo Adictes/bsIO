@@ -27,5 +27,13 @@ func main() {
 
 // Greetings says hello in browser's window
 func Greetings(w http.ResponseWriter, r *http.Request) {
-	t.ExecuteTemplate(w, "index", Context{"bsIO"})
+	if r.Method == "GET" {
+		t.ExecuteTemplate(w, "index", Context{"bsIO"})
+	} else {
+		if err := r.ParseForm(); err != nil {
+			log.Print(err)
+		}
+		log.Println(r.Form["pos"])
+		t.ExecuteTemplate(w, "index", Context{"bsIO"})
+	}
 }
