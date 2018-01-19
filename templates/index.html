@@ -1,13 +1,23 @@
 {{ define "index" }}
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/app.css">
     <title>{{.Title}}</title>
+
+    <script>
+        var ws = new WebSocket("ws://localhost:8080/ws");
+
+        function send(cell) {
+            ws.send(cell);
+        }
+    </script>
 </head>
+
 <body>
     <header class="navbar navbar-expand-lg flex-row">
         <a class="navbar-brand" href="#">bsIO</a>
@@ -25,16 +35,10 @@
                 <table class="table table-bordered">
                     <tr>
                         <td>
-                            <form class="text-center" method="post">
-                                <input hidden type="text" name="pos" value="0-0">
-                                <button class="btn btn-link" type="submit">.</button>
-                            </form>
+                            <button class="btn btn-link" onclick="send('0-0')">.</button>
                         </td>
                         <td>
-                            <form class="text-center" method="post">
-                                    <input hidden type="text" name="pos" value="0-1">
-                                    <button class="btn btn-link" type="submit">.</button>
-                                </form>
+                            <button class="btn btn-link" onclick="send('0-1')">.</button>
                         </td>
                         <td></td>
                         <td></td>
@@ -153,7 +157,7 @@
                         <td></td>
                         <td></td>
                     </tr>
-                </table> 
+                </table>
             </div>
             <div class="col-lg-5 border">
                 <p>Тут чат</p>
@@ -287,5 +291,6 @@
     </div>
     <footer> Made by Adictes </footer>
 </body>
+
 </html>
 {{ end }}

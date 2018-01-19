@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -20,7 +21,7 @@ func main() {
 
 	router.ServeFiles("/assets/*filepath", http.Dir("assets/"))
 	router.GET("/", Index)
-	router.POST("/", PressCell)
+	router.GET("/ws", PressCell)
 
 	t = template.Must(template.New("Game").ParseFiles("templates/index.html"))
 
@@ -30,13 +31,28 @@ func main() {
 	}
 }
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
 // PressCell is action, when user press the dot for putting ship in this cell
 func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if err := r.ParseForm(); err != nil {
-		log.Print(err)
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
 	}
-	log.Println(r.Form["pos"])
-	t.ExecuteTemplate(w, "index", Context{"bsIO"})
+	defer ws.Close()
+
+	for {
+		_, msg, err := ws.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Println(string(msg))
+	}
 }
 
 // Index is general page
