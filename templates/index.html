@@ -12,8 +12,17 @@
     <script>
         var ws = new WebSocket("ws://localhost:8080/ws");
 
+        function changeCellColor(id) {
+            if (document.getElementById(id).style.backgroundColor == "") {
+                document.getElementById(id).style.backgroundColor = "#337ab7";
+            } else {
+                document.getElementById(id).style.backgroundColor = "";
+            }
+        }
+
         function send(cell) {
             ws.send(cell);
+            changeCellColor(cell);
         }
     </script>
 </head>
@@ -34,13 +43,9 @@
                 <p class="lead"> Собственный ник </p>
                 <table class="table table-bordered">
                     <tr>
-                        <td>
-                            <button class="btn btn-link" onclick="send('0-0')">.</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-link" onclick="send('0-1')">.</button>
-                        </td>
-                        <td></td>
+                        <td id="0-0" onclick="send('0-0')"></td>
+                        <td id="0-1" onclick="send('0-1')"></td>
+                        <td id="0-2" onclick="send('0-2')"></td>
                         <td></td>
                         <td></td>
                         <td></td>
