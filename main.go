@@ -11,11 +11,6 @@ import (
 
 var t *template.Template
 
-// Context is struct for template
-type Context struct {
-	Title string
-}
-
 func main() {
 	router := httprouter.New()
 
@@ -57,5 +52,5 @@ func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // Index is general page
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t.ExecuteTemplate(w, "index", Context{"bsIO"})
+	t.ExecuteTemplate(w, "index", nil)
 }
