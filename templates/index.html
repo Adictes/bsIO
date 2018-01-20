@@ -1,28 +1,32 @@
 {{ define "index" }}
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/app.css">
+    <title>{{.Title}}</title>
+
     <script>
-        function allowDrop(ev) {
-            ev.preventDefault();
+        var ws = new WebSocket("ws://localhost:8080/ws");
+
+        function changeCellColor(id) {
+            if (document.getElementById(id).style.backgroundColor == "") {
+                document.getElementById(id).style.backgroundColor = "#337ab7";
+            } else {
+                document.getElementById(id).style.backgroundColor = "";
+            }
         }
 
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.id);
-        }
-
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.appendChild(document.getElementById(data));
+        function send(cell) {
+            ws.send(cell);
+            changeCellColor(cell);
         }
     </script>
-    <title>{{.Title}}</title>
 </head>
+
 <body>
     <header class="navbar navbar-expand-lg flex-row">
         <a class="navbar-brand" href="#">bsIO</a>
@@ -35,130 +39,135 @@
     </header>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-3">
+            <div class="col-lg border">
                 <p class="lead"> Собственный ник </p>
                 <table class="table table-bordered">
                     <tr>
-                        <td id="0-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="0-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td id="0-0" onclick="send('0-0')"></td>
+                        <td id="0-1" onclick="send('0-1')"></td>
+                        <td id="0-2" onclick="send('0-2')"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="1-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="1-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="2-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="2-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="3-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="3-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="4-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="4-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="5-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="5-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="6-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="6-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="7-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="7-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="8-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="8-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td id="9-0" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-1" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-2" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-3" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-4" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-5" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-6" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-7" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-8" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
-                        <td id="9-9" ondrop="drop(event)" ondragover="allowDrop(event)"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
-                </table> 
+                </table>
+            </div>
+            <div class="col-lg-5 border">
+                <p>Тут чат</p>
+            </div>
+            <div class="col-lg border">
                 <p class="lead"> Ник соперника </p>
                 <table class="table table-bordered">
                     <tr>
@@ -283,18 +292,10 @@
                     </tr>
                 </table>
             </div>
-            <div class="col-lg-4">
-                <div class="site">
-                    <img id="ship1" class="ship-box-1" src="../assets/img/EeE1Lsp.gif" ondragstart="drag(event)" draggable="true"></img>
-                    <div id="ship2" class="ship-box-2" ondragstart="drag(event)" draggable="true" ></div>
-                </div>
-            </div>
-            <div class="col-lg-5">
-                Тут чат
-            </div>
         </div>
     </div>
-    <footer class="container-fluid"> Made by Adictes </footer>
+    <footer> Made by Adictes </footer>
 </body>
+
 </html>
 {{ end }}

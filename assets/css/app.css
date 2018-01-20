@@ -3,30 +3,21 @@ footer {
     text-align: initial;
 }
 td {
-    height: 37.9px !important;
-    width: 37.9px !important;
+    height: 2.5rem;
+    width: 2.5rem;
 }
 .table td {
     padding: 0rem;
 }
+td:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+.btn {
+    padding: 0rem;
+}
 .table {
-    height: 380px;
-    width: 380px;
-}
-.site {
-    margin: 1rem;
-    padding: 1rem;
-}
-.ship-box-1 {
-    padding: 1px;
-    width: 36.9px;
-    height: 36.9px;
-    border: 1px solid lightseagreen;
-}
-.ship-box-2 {
-    padding: 1px;
-    width: 73.8px;
-    height: 36.9px;
-    background: rgba(0,0,255,.05);
-    border: 1px solid lightseagreen;
+    margin-left: auto;
+    margin-right: auto;
+    height: 25rem;
+    width: 25rem;
 }
