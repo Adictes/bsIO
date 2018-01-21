@@ -12,6 +12,8 @@ import (
 var t *template.Template
 
 func main() {
+	fieldInit()
+
 	router := httprouter.New()
 
 	router.ServeFiles("/assets/*filepath", http.Dir("assets/"))
@@ -48,6 +50,7 @@ func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 		log.Println(string(msg))
+		ActWithCell(msg[0], msg[2])
 	}
 }
 
