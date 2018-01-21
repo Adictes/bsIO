@@ -10,25 +10,33 @@ func Checklocation(){
 				Field[i-1][j-1].access=false
 			}
 			if Field[i+1][j].busy==true{
-				Field[i-1][j].access=false
+				if Field[i-1][j].busy==false{
+					Field[i-1][j].access=false
+				}
 				Field[i][j-1].access=false
 				Field[i][j+1].access=false
 				
 			}
 			if Field[i-1][j].busy==true{
-				Field[i+1][j].access=false
+				if Field[i+1][j].busy==false{
+					Field[i+1][j].access=false
+				}
 				Field[i][j+1].access=false
 				Field[i][j-1].access=false
 			}
 			if Field[i][j+1].busy==true{
 				Field[i+1][j].access=false
 				Field[i-1][j].access=false
-				Field[i][j].access=false
+				if Field[i][j-1].busy==false{
+					Field[i][j+1].access=false
+				}
 			}
 			if Field[i][j-1].busy==true{
 				Field[i+1][j].access=false
 				Field[i-1][j].access=false
-				Field[i][j+1].access=false
+				if Field[i][j+1].busy==false{
+					Field[i][j+1].access=false
+				}
 			}
 		}
 	}
