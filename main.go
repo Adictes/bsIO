@@ -31,7 +31,8 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-// PressCell is action, when user press the dot for putting ship in this cell
+// PressCell is action, when user press the cell for putting ship in this one.
+// Uses websocket connection
 func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
