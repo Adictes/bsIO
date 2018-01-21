@@ -2,18 +2,8 @@ footer {
     padding: 10px;
     text-align: initial;
 }
-td {
-    height: 2.5rem;
-    width: 2.5rem;
-}
-.table td {
-    padding: 0rem;
-}
 td:hover {
     background-color: rgba(0, 0, 0, 0.075);
-}
-.btn {
-    padding: 0rem;
 }
 .table {
     margin-left: auto;
