@@ -86,6 +86,32 @@ func DisableExcessCells() {
 	}
 }
 
+type NotAccessibleCells struct {
+	Coords []string `json:"coords"`
+}
+
+func (c NotAccessibleCells) Get() []string {
+	return c.Coords
+}
+
+func (c *NotAccessibleCells) Fill() {
+	for i := 1; i < fieldSize-1; i++ {
+		for j := 1; j < fieldSize-1; j++ {
+			// Если ячейка не занята и не доступна
+			if !Field[i][j].isBusy() && !Field[i][j].isAccessible() {
+				c.Coords = append(c.Coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
+			}
+		}
+	}
+}
+
+// GetNotAccessibleCells @TODO
+func GetNotAccessibleCells() []string {
+	nac := NotAccessibleCells{}
+	nac.Fill()
+	return nac.Get()
+}
+
 // PrintField prints game field to console
 func PrintField() {
 	fmt.Println("----------------------")

@@ -12,17 +12,25 @@
     <script>
         var ws = new WebSocket("ws://localhost:8080/ws");
 
-        function changeCellColor(id) {
-            if (document.getElementById(id).style.backgroundColor == "") {
-                document.getElementById(id).style.backgroundColor = "#337ab7";
-            } else {
-                document.getElementById(id).style.backgroundColor = "";
+        ws.onmessage = function (event) {
+            var cells = JSON.parse(event.data)
+            for (i in cells) {
+                console.log(cells[i])
+                document.getElementById(cells[i]).style.backgroundColor = "#ffccff"
             }
         }
 
         function send(cell) {
             ws.send(cell);
             changeCellColor(cell);
+        }
+
+        function changeCellColor(id) {
+            if (document.getElementById(id).style.backgroundColor == "") {
+                document.getElementById(id).style.backgroundColor = "#337ab7";
+            } else {
+                document.getElementById(id).style.backgroundColor = "";
+            }
         }
     </script>
 </head>

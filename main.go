@@ -51,6 +51,8 @@ func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}
 		log.Println(string(msg))
 		IndicateCell(msg[0], msg[2])
+
+		ws.WriteJSON(GetNotAccessibleCells()) // Пока что не разобрался как это работает - JSON
 	}
 }
 
