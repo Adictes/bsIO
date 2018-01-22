@@ -12,8 +12,6 @@ import (
 var t *template.Template
 
 func main() {
-	fieldInit()
-
 	router := httprouter.New()
 
 	router.ServeFiles("/assets/*filepath", http.Dir("assets/"))
@@ -58,5 +56,6 @@ func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // Index is general page
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	fieldInit()
 	t.ExecuteTemplate(w, "index", nil)
 }
