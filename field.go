@@ -56,34 +56,46 @@ func IndicateCell(y, x byte) {
 func DisableExcessCells() {
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
-			if Field[i][j].isBusy() {
-				Field[i-1][j-1].access = false
-				Field[i-1][j+1].access = false
-				Field[i+1][j-1].access = false
-				Field[i+1][j+1].access = false
+			if Field[i][j].isBusy(){
+				Field[i-1][j-1].access=false
+				Field[i-1][j+1].access=false
+				Field[i+1][j-1].access=false
+				Field[i+1][j+1].access=false	
+			if Field[i+1][j].busy==true{
+				if !Field[i-1][j].isBusy(){
+					Field[i-1][j].access=false
+				}
+				Field[i][j].access=true
+				Field[i][j-1].access=false
+				Field[i][j+1].access=false
 			}
-			if Field[i+1][j].isBusy() {
-				Field[i-1][j].access = false
-				Field[i][j-1].access = false
-				Field[i][j+1].access = false
+			if Field[i-1][j].isBusy(){
+				if !Field[i+1][j].isBusy(){
+					Field[i+1][j].access=false
+				}
+				Field[i][j].access=true
+				Field[i][j-1].access=false
+				Field[i][j+1].access=false
 			}
-			if Field[i-1][j].isBusy() {
-				Field[i+1][j].access = false
-				Field[i][j-1].access = false
-				Field[i][j+1].access = false
+			if Field[i][j+1].isBusy(){
+				Field[i-1][j].access=false
+				Field[i+1][j].access=false
+				Field[i][j].access=true
+				if !Field[i][j-1].isBusy(){
+					Field[i][j-1].access=false
+				}
 			}
-			if Field[i][j+1].isBusy() {
-				Field[i-1][j].access = false
-				Field[i+1][j].access = false
-				Field[i][j+1].access = false
-			}
-			if Field[i][j-1].isBusy() {
-				Field[i-1][j].access = false
-				Field[i+1][j].access = false
-				Field[i][j+1].access = false
+			if Field[i][j-1].isBusy(){
+				Field[i-1][j].access=false
+				Field[i+1][j].access=false
+				Field[i][j].access=true
+				if !Field[i][j+1].isBusy(){
+					Field[i][j+1].access=false
+				}
 			}
 		}
 	}
+}
 }
 
 type NotAccessibleCells struct {
