@@ -48,7 +48,42 @@ func IndicateCell(y, x byte) {
 	} else {
 		Field[row][col] = Cell{true, false}
 	}
-	//PrintField()  <-- For debug
+	DisableExcessCells()
+	PrintField() // <-- For debug
+}
+
+// DisableExcessCells disables cells, which cannot be ship's place
+func DisableExcessCells() {
+	for i := 1; i < fieldSize-1; i++ {
+		for j := 1; j < fieldSize-1; j++ {
+			if Field[i][j].isBusy() {
+				Field[i-1][j-1].access = false
+				Field[i-1][j+1].access = false
+				Field[i+1][j-1].access = false
+				Field[i+1][j+1].access = false
+			}
+			if Field[i+1][j].isBusy() {
+				Field[i-1][j].access = false
+				Field[i][j-1].access = false
+				Field[i][j+1].access = false
+			}
+			if Field[i-1][j].isBusy() {
+				Field[i+1][j].access = false
+				Field[i][j-1].access = false
+				Field[i][j+1].access = false
+			}
+			if Field[i][j+1].isBusy() {
+				Field[i-1][j].access = false
+				Field[i+1][j].access = false
+				Field[i][j+1].access = false
+			}
+			if Field[i][j-1].isBusy() {
+				Field[i-1][j].access = false
+				Field[i+1][j].access = false
+				Field[i][j+1].access = false
+			}
+		}
+	}
 }
 
 // PrintField prints game field to console
@@ -59,6 +94,8 @@ func PrintField() {
 		fmt.Printf("%v: ", i-1)
 		for j := 1; j < fieldSize-1; j++ {
 			if Field[i][j].isBusy() {
+				fmt.Print("S ")
+			} else if !Field[i][j].isAccessible() {
 				fmt.Print("X ")
 			} else {
 				fmt.Print("O ")

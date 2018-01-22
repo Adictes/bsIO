@@ -50,7 +50,7 @@ func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 		log.Println(string(msg))
-		ActWithCell(msg[0], msg[2])
+		IndicateCell(msg[0], msg[2])
 	}
 }
 
