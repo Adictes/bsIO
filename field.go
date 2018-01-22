@@ -5,7 +5,8 @@ import (
 	"strconv"
 )
 
-const fieldSize = 10
+// Deliberately increased fieldSize for more convenient checking the field
+const fieldSize = 12
 
 // Cell is a struct with 2 filds:
 // busy: true if ship is already standing at this cell
@@ -35,26 +36,28 @@ func fieldInit() {
 	}
 }
 
-// ActWithCell @TODO
-func ActWithCell(y byte, x byte) {
+// IndicateCell indicates the cell on field
+func IndicateCell(y, x byte) {
 	row, _ := strconv.Atoi(string(y))
 	col, _ := strconv.Atoi(string(x))
+
+	row, col = row+1, col+1
 
 	if Field[row][col].isBusy() {
 		Field[row][col] = Cell{false, true}
 	} else {
 		Field[row][col] = Cell{true, false}
 	}
-	PrintField()
+	//PrintField()  <-- For debug
 }
 
-// PrintField prints game field
+// PrintField prints game field to console
 func PrintField() {
 	fmt.Println("----------------------")
 	fmt.Println("   0 1 2 3 4 5 6 7 8 9")
-	for i := 0; i < fieldSize; i++ {
-		fmt.Printf("%v: ", i)
-		for j := 0; j < fieldSize; j++ {
+	for i := 1; i < fieldSize-1; i++ {
+		fmt.Printf("%v: ", i-1)
+		for j := 1; j < fieldSize-1; j++ {
 			if Field[i][j].isBusy() {
 				fmt.Print("X ")
 			} else {
