@@ -56,72 +56,59 @@ func IndicateCell(y, x byte) {
 func DisableExcessCells() {
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
-			if Field[i][j].isBusy(){
-				Field[i-1][j-1].access=false
-				Field[i-1][j+1].access=false
-				Field[i+1][j-1].access=false
-				Field[i+1][j+1].access=false	
-			if Field[i+1][j].busy==true{
-				if !Field[i-1][j].isBusy(){
-					Field[i-1][j].access=false
+			if Field[i][j].isBusy() {
+				Field[i-1][j-1].access = false
+				Field[i-1][j+1].access = false
+				Field[i+1][j-1].access = false
+				Field[i+1][j+1].access = false
+				if Field[i+1][j].busy == true {
+					if !Field[i-1][j].isBusy() {
+						Field[i-1][j].access = false
+					}
+					Field[i][j].access = true
+					Field[i][j-1].access = false
+					Field[i][j+1].access = false
 				}
-				Field[i][j].access=true
-				Field[i][j-1].access=false
-				Field[i][j+1].access=false
-			}
-			if Field[i-1][j].isBusy(){
-				if !Field[i+1][j].isBusy(){
-					Field[i+1][j].access=false
+				if Field[i-1][j].isBusy() {
+					if !Field[i+1][j].isBusy() {
+						Field[i+1][j].access = false
+					}
+					Field[i][j].access = true
+					Field[i][j-1].access = false
+					Field[i][j+1].access = false
 				}
-				Field[i][j].access=true
-				Field[i][j-1].access=false
-				Field[i][j+1].access=false
-			}
-			if Field[i][j+1].isBusy(){
-				Field[i-1][j].access=false
-				Field[i+1][j].access=false
-				Field[i][j].access=true
-				if !Field[i][j-1].isBusy(){
-					Field[i][j-1].access=false
+				if Field[i][j+1].isBusy() {
+					Field[i-1][j].access = false
+					Field[i+1][j].access = false
+					Field[i][j].access = true
+					if !Field[i][j-1].isBusy() {
+						Field[i][j-1].access = false
+					}
 				}
-			}
-			if Field[i][j-1].isBusy(){
-				Field[i-1][j].access=false
-				Field[i+1][j].access=false
-				Field[i][j].access=true
-				if !Field[i][j+1].isBusy(){
-					Field[i][j+1].access=false
+				if Field[i][j-1].isBusy() {
+					Field[i-1][j].access = false
+					Field[i+1][j].access = false
+					Field[i][j].access = true
+					if !Field[i][j+1].isBusy() {
+						Field[i][j+1].access = false
+					}
 				}
 			}
 		}
 	}
 }
-}
 
-type NotAccessibleCells struct {
-	Coords []string `json:"coords"`
-}
-
-func (c NotAccessibleCells) Get() []string {
-	return c.Coords
-}
-
-func (c *NotAccessibleCells) Fill() {
+// GetNotAccessibleCells returns not accessible cells, by searching through all field each time
+func GetNotAccessibleCells() (coords []string) {
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
 			// Если ячейка не занята и не доступна
 			if !Field[i][j].isBusy() && !Field[i][j].isAccessible() {
-				c.Coords = append(c.Coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
+				coords = append(coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
 			}
 		}
 	}
-}
-
-// GetNotAccessibleCells @TODO
-func GetNotAccessibleCells() []string {
-	nac := NotAccessibleCells{}
-	nac.Fill()
-	return nac.Get()
+	return coords
 }
 
 // PrintField prints game field to console
