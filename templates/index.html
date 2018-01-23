@@ -13,17 +13,18 @@
         var ws = new WebSocket("ws://localhost:8080/ws");
 
         ws.onmessage = function (event) {
-            var cells = JSON.parse(event.data);
+            var data = JSON.parse(event.data);
+	    
+	    document.getElementById("single-decker").innerText = data.SingleDecker
+            document.getElementById("two-decker").innerText = data.TwoDecker
+            document.getElementById("three-decker").innerText = data.ThreeDecker
+            document.getElementById("four-decker").innerText = data.FourDecker
 
-            document.getElementById("single-decker").innerText = cells.SingleDecker
-            document.getElementById("two-decker").innerText = cells.TwoDecker
-            document.getElementById("three-decker").innerText = cells.ThreeDecker
-            document.getElementById("four-decker").innerText = cells.FourDecker
-
-
-            //for (i in cells) {
-            //    document.getElementById(cells[i]).style.backgroundColor = "#ffccff";
-            //}
+	    if (data instanceof Array) {
+                for (i in data) {
+                    document.getElementById(data[i]).style.backgroundColor = "#ffccff";
+                }
+	    }
         }
 
         function send(cell) {
