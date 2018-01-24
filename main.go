@@ -48,15 +48,15 @@ func PressCell(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 		log.Println(string(msg))
-		IndicateCell(msg[0], msg[2])
+		field.IndicateCell(msg[0], msg[2])
 
 		//ws.WriteJSON(GetNotAccessibleCells())
-		ws.WriteJSON(GetAvailableShips())
+		ws.WriteJSON(field.GetAvailableShips())
 	}
 }
 
 // Index is general page
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fieldInit()
+	field.Init()
 	t.ExecuteTemplate(w, "index", nil)
 }
