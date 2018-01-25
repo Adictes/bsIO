@@ -94,6 +94,10 @@ func (f *Field) GetAvailableShips() Ships {
 			}
 		}
 	}
+	if shipLength != 0 {
+		ships.shrink(shipLength)
+		shipLength = 0
+	}
 	// Теперь по вертикале
 	for j := 1; j < fieldSize-1; j++ {
 		for i := 1; i < fieldSize-1; i++ {
@@ -107,6 +111,9 @@ func (f *Field) GetAvailableShips() Ships {
 				shipLength = 0
 			}
 		}
+	}
+	if shipLength != 0 {
+		ships.shrink(shipLength)
 	}
 	return ships
 }
