@@ -12,17 +12,32 @@
     <script>
         var ws = new WebSocket("ws://localhost:8080/ws");
 
-        function changeCellColor(id) {
-            if (document.getElementById(id).style.backgroundColor == "") {
-                document.getElementById(id).style.backgroundColor = "#337ab7";
-            } else {
-                document.getElementById(id).style.backgroundColor = "";
+        ws.onmessage = function (event) {
+            var data = JSON.parse(event.data);
+
+            document.getElementById("single-decker").innerText = data.SingleDecker
+            document.getElementById("two-decker").innerText = data.TwoDecker
+            document.getElementById("three-decker").innerText = data.ThreeDecker
+            document.getElementById("four-decker").innerText = data.FourDecker
+
+            if (data instanceof Array) {
+                for (i in data) {
+                    document.getElementById(data[i]).style.backgroundColor = "#ffccff";
+                }
             }
         }
 
         function send(cell) {
             ws.send(cell);
             changeCellColor(cell);
+        }
+
+        function changeCellColor(id) {
+            if (document.getElementById(id).style.backgroundColor == "") {
+                document.getElementById(id).style.backgroundColor = "#337ab7";
+            } else {
+                document.getElementById(id).style.backgroundColor = "";
+            }
         }
     </script>
 </head>
@@ -169,19 +184,19 @@
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Однопалубных
-                                <span class="badge badge-info badge-pill">4</span>
+                                <span id="single-decker" class="badge badge-info badge-pill">4</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Двухпалубных
-                                <span class="badge badge-info badge-pill">3</span>
+                                <span id="two-decker" class="badge badge-info badge-pill">3</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Трехпалубных
-                                <span class="badge badge-info badge-pill">2</span>
+                                <span id="three-decker" class="badge badge-info badge-pill">2</span>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 Четырехпалубных
-                                <span class="badge badge-info badge-pill">1</span>
+                                <span id="four-decker" class="badge badge-info badge-pill">1</span>
                             </li>
                         </ul>
                     </div>
@@ -317,6 +332,29 @@
                         <td></td>
                     </tr>
                 </table>
+                <p class="lead">Кол-во целых кораблей:</p>
+                <div class="row">
+                    <div class="col">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Однопалубных
+                                <span class="badge badge-info badge-pill">4</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Двухпалубных
+                                <span class="badge badge-info badge-pill">3</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Трехпалубных
+                                <span class="badge badge-info badge-pill">2</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Четырехпалубных
+                                <span class="badge badge-info badge-pill">1</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
