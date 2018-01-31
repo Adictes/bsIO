@@ -11,7 +11,7 @@ type Field [fieldSize][fieldSize]Cell
 // Deliberately increased fieldSize for more convenient checking the field
 const fieldSize = 12
 
-var field Field
+//var field Field
 
 // Cell is a struct with 2 filds:
 // busy: true if ship is already standing at this cell
