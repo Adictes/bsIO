@@ -9,37 +9,6 @@
     <link rel="stylesheet" type="text/css" href="../assets/css/app.css">
     <title>bsIO</title>
 
-    <script>
-        var ws = new WebSocket("ws://localhost:8080/ws");
-
-        ws.onmessage = function (event) {
-            var data = JSON.parse(event.data);
-
-            document.getElementById("single-decker").innerText = data.SingleDecker
-            document.getElementById("two-decker").innerText = data.TwoDecker
-            document.getElementById("three-decker").innerText = data.ThreeDecker
-            document.getElementById("four-decker").innerText = data.FourDecker
-
-            if (data instanceof Array) {
-                for (i in data) {
-                    document.getElementById(data[i]).style.backgroundColor = "#ffccff";
-                }
-            }
-        }
-
-        function send(cell) {
-            ws.send(cell);
-            changeCellColor(cell);
-        }
-
-        function changeCellColor(id) {
-            if (document.getElementById(id).style.backgroundColor == "") {
-                document.getElementById(id).style.backgroundColor = "#337ab7";
-            } else {
-                document.getElementById(id).style.backgroundColor = "";
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -201,7 +170,7 @@
                         </ul>
                     </div>
                     <div class="col-4 align-self-center">
-                        <button type="button" class="btn-lg btn-success">I'm ready</button>
+                        <button type="button" class="btn-lg btn-success" onclick="startTheGame()">I'm ready</button>
                     </div>
                 </div>
             </div>
@@ -359,6 +328,42 @@
         </div>
     </div>
     <footer> Made by Adictes </footer>
+    <script>
+        var ws = new WebSocket("ws://localhost:8080/ps");
+
+        ws.onmessage = function (event) {
+            var data = JSON.parse(event.data);
+
+            document.getElementById("single-decker").innerText = data.SingleDecker
+            document.getElementById("two-decker").innerText = data.TwoDecker
+            document.getElementById("three-decker").innerText = data.ThreeDecker
+            document.getElementById("four-decker").innerText = data.FourDecker
+
+            if (data instanceof Array) {
+                for (i in data) {
+                    document.getElementById(data[i]).style.backgroundColor = "#ffccff";
+                }
+            }
+        }
+
+        function send(cell) {
+            ws.send(cell);
+            changeCellColor(cell);
+        }
+
+        function changeCellColor(id) {
+            if (document.getElementById(id).style.backgroundColor == "") {
+                document.getElementById(id).style.backgroundColor = "#337ab7";
+            } else {
+                document.getElementById(id).style.backgroundColor = "";
+            }
+        }
+
+        var stg = new WebSocket("ws://localhost:8080/stg");
+        function startTheGame() {
+            stg.send("The game has begun")
+        }
+    </script>
 </body>
 
 </html>
