@@ -5,13 +5,11 @@ import (
 	"strconv"
 )
 
-// Field is a game field
-type Field [fieldSize][fieldSize]Cell
-
 // Deliberately increased fieldSize for more convenient checking the field
 const fieldSize = 12
 
-//var field Field
+// Field is a game field
+type Field [fieldSize][fieldSize]Cell
 
 // Cell is a struct with 2 filds:
 // busy: true if ship is already standing at this cell
@@ -62,25 +60,12 @@ type Ships struct {
 	FourDecker   int
 }
 
-// shrink check length of ship and remove one
-func (s *Ships) shrink(length int) {
-	if length == 1 {
-		s.SingleDecker--
-	} else if length == 2 {
-		s.TwoDecker--
-	} else if length == 3 {
-		s.ThreeDecker--
-	} else if length == 4 {
-		s.FourDecker--
-	}
-}
-
 // GetAvailableShips returns available ships as struct
 func (f *Field) GetAvailableShips() Ships {
 	ships := Ships{4, 3, 2, 1}
 	var seenCells [12][12]bool
 	var shipLength = 0
-	// Пройдемся сначало по горизонтале
+	// Пройдемся сначало по горизонтали
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
 			if f[i][j].isBusy() {
@@ -98,7 +83,7 @@ func (f *Field) GetAvailableShips() Ships {
 		ships.shrink(shipLength)
 		shipLength = 0
 	}
-	// Теперь по вертикале
+	// Теперь по вертикали
 	for j := 1; j < fieldSize-1; j++ {
 		for i := 1; i < fieldSize-1; i++ {
 			if seenCells[i][j] == true {
@@ -116,6 +101,19 @@ func (f *Field) GetAvailableShips() Ships {
 		ships.shrink(shipLength)
 	}
 	return ships
+}
+
+// shrink check length of ship and remove one
+func (s *Ships) shrink(length int) {
+	if length == 1 {
+		s.SingleDecker--
+	} else if length == 2 {
+		s.TwoDecker--
+	} else if length == 3 {
+		s.ThreeDecker--
+	} else if length == 4 {
+		s.FourDecker--
+	}
 }
 
 // GetNotAccessibleCells returns not accessible cells, by searching through all field
