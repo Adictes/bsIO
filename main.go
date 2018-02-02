@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/websocket"
 	"github.com/julienschmidt/httprouter"
@@ -32,7 +33,7 @@ func main() {
 	router.GET("/ps", PressCell)
 	router.GET("/stg", StartTheGame)
 
-	err := http.ListenAndServe(":8080", router)
+	err := http.ListenAndServe(":8080", context.ClearHandler(router))
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
