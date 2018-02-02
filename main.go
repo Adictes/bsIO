@@ -46,7 +46,8 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	if auth, ok := session.Values["logged"].(bool); !auth || !ok {
-		http.Redirect(w, r, "/login", 302)
+		http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+		return
 	}
 
 	fields[session.Values["username"].(string)] = &Field{}
@@ -78,7 +79,7 @@ func LoginSend(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session.Values["username"] = r.FormValue("username")
 	session.Values["logged"] = true
 	session.Save(r, w)
-	http.Redirect(w, r, "/", 301)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 var upgrader = websocket.Upgrader{
@@ -137,5 +138,9 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 		log.Println(string(msg) + " by " + session.Values["username"].(string))
+
+		// Here function that checks validation
+
+		// Here selection of players
 	}
 }

@@ -21,9 +21,9 @@
         </ul>
     </header>
     <div class="container-fluid">
-        <div class="row justify-content-md-center align-items-center">
+        <div class="row justify-content-md-center">
             <div class="col-4 border">
-                <form action="/login" method="post">
+                <form name="form" action="/login" method="post" onsubmit="return checkInput(this);">
                     <div class="form-group">
                         <label>Your username</label>
                         <input class="form-control" name="username" type="text" placeholder="Username" value="{{.}}">
@@ -34,6 +34,14 @@
         </div>
     </div>
     <footer> Made by Adictes </footer>
+    <script>
+        function checkInput(form) {
+            if (form.username.value.trim() == "") {
+                alert("Username is empty");
+                return false;
+            }
+        }
+    </script>
 </body>
 
 </html>
