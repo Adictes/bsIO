@@ -6,37 +6,10 @@ import (
 )
 
 // Field is a game field
-type Field [fieldSize][fieldSize]Cell
+type Field [fieldSize][fieldSize]bool
 
 // Deliberately increased fieldSize for more convenient checking the field
 const fieldSize = 12
-
-//var field Field
-
-// Cell is a struct with 2 filds:
-// busy: true if ship is already standing at this cell
-// access: true if ship can be placed at this cell
-type Cell struct {
-	busy   bool
-	access bool
-}
-
-func (c Cell) isBusy() bool {
-	return c.busy
-}
-
-func (c Cell) isAccessible() bool {
-	return c.access
-}
-
-// Init initializes the game field
-func (f *Field) Init() {
-	for i := 0; i < fieldSize; i++ {
-		for j := 0; j < fieldSize; j++ {
-			f[i][j] = Cell{busy: false, access: true}
-		}
-	}
-}
 
 // IndicateCell indicates the cell on field
 func (f *Field) IndicateCell(y, x byte) {
@@ -45,12 +18,12 @@ func (f *Field) IndicateCell(y, x byte) {
 
 	row, col = row+1, col+1
 
-	if f[row][col].isBusy() {
-		f[row][col] = Cell{false, true}
+	if f[row][col] == false {
+		f[row][col] = true
 	} else {
-		f[row][col] = Cell{true, false}
+		f[row][col] = false
 	}
-	f.DisableExcessCells()
+	//f.DisableExcessCells()
 	f.print() // <-- For debug
 }
 
@@ -80,11 +53,11 @@ func (f *Field) GetAvailableShips() Ships {
 	ships := Ships{4, 3, 2, 1}
 	var seenCells [12][12]bool
 	var shipLength = 0
-	// Пройдемся сначало по горизонтале
+	// Пройдемся сначала по горизонтали
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
-			if f[i][j].isBusy() {
-				if !f[i-1][j].isBusy() && !f[i+1][j].isBusy() {
+			if f[i][j] == true {
+				if f[i-1][j] == true || f[i+1][j] == true {
 					shipLength++
 					seenCells[i][j] = true
 				}
@@ -98,13 +71,13 @@ func (f *Field) GetAvailableShips() Ships {
 		ships.shrink(shipLength)
 		shipLength = 0
 	}
-	// Теперь по вертикале
+	// Теперь по вертикали
 	for j := 1; j < fieldSize-1; j++ {
 		for i := 1; i < fieldSize-1; i++ {
 			if seenCells[i][j] == true {
 				continue
 			}
-			if f[i][j].isBusy() {
+			if f[i][j] == true {
 				shipLength++
 			} else {
 				ships.shrink(shipLength)
@@ -123,7 +96,7 @@ func (f *Field) GetNotAccessibleCells() (coords []string) {
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
 			// Если ячейка не занята и не доступна
-			if !f[i][j].isBusy() && !f[i][j].isAccessible() {
+			if f[i][j] == false {
 				coords = append(coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
 			}
 		}
@@ -132,49 +105,59 @@ func (f *Field) GetNotAccessibleCells() (coords []string) {
 }
 
 // DisableExcessCells disables cells, which cannot be ship's place
-func (f *Field) DisableExcessCells() {
+func (f *Field) DisableExcessCells() bool {
+	var numberOfPoints = 20
+	var seenCells [12][12]bool
+	var shipLength = 0
+	// Пройдемся сначала по горизонтали
 	for i := 1; i < fieldSize-1; i++ {
-		for j := 1; j < fieldSize-1; j++ {
-			if f[i][j].isBusy() {
-				f[i-1][j-1].access = false
-				f[i-1][j+1].access = false
-				f[i+1][j-1].access = false
-				f[i+1][j+1].access = false
-				if f[i+1][j].isBusy() {
-					if !f[i-1][j].isBusy() {
-						f[i-1][j].access = false
-					}
-					f[i][j].access = true
-					f[i][j-1].access = false
-					f[i][j+1].access = false
+		for j := 1; j < fieldSize; j++ {
+			flag = false
+			if f[i][j] == true {
+				if f[i-1][j] == true || f[i+1][j] == true {
+					shipLength++
+					seenCells[i][j] = true
 				}
-				if f[i-1][j].isBusy() {
-					if !f[i+1][j].isBusy() {
-						f[i+1][j].access = false
-					}
-					f[i][j].access = true
-					f[i][j-1].access = false
-					f[i][j+1].access = false
+			} else if shipLength != 0 {
+				if f[i][j-shipLength-1] == true || f[i][j] == true {
+					return false
 				}
-				if f[i][j+1].isBusy() {
-					f[i-1][j].access = false
-					f[i+1][j].access = false
-					f[i][j].access = true
-					if !f[i][j-1].isBusy() {
-						f[i][j-1].access = false
+				for k := j - shipLength - 1; k <= j; k++ {
+					if f[i-1][k] == true || f[i+1][k] == true {
+						return false
 					}
 				}
-				if f[i][j-1].isBusy() {
-					f[i-1][j].access = false
-					f[i+1][j].access = false
-					f[i][j].access = true
-					if !f[i][j+1].isBusy() {
-						f[i][j+1].access = false
-					}
-				}
+				numberOfPoints = numberOfPoints - shipLength
+				shipLength = 0
 			}
 		}
 	}
+	// Теперь по вертикали
+	for j := 1; j < fieldSize-1; j++ {
+		for i := 1; i < fieldSize; i++ {
+			if seenCells[i][j] == true {
+				continue
+			}
+			if f[i][j] == true {
+				shipLength++
+			} else if shipLength != 0 {
+				if f[i-shipLength-1][j] == true || f[i][j] == true {
+					return false
+				}
+				for k := i - shipLength - 1; k <= i; k++ {
+					if f[k][j-1] == true || f[k][j+1] == true {
+						return false
+					}
+				}
+				numberOfPoints = numberOfPoints - shipLength
+				shipLength = 0
+			}
+		}
+	}
+	if numberOfPoints == 0 {
+		return false
+	}
+	return true
 }
 
 // print prints game field to console
@@ -184,9 +167,7 @@ func (f *Field) print() {
 	for i := 1; i < fieldSize-1; i++ {
 		fmt.Printf("%v: ", i-1)
 		for j := 1; j < fieldSize-1; j++ {
-			if f[i][j].isBusy() {
-				fmt.Print("S ")
-			} else if !f[i][j].isAccessible() {
+			if f[i][j] == true {
 				fmt.Print("X ")
 			} else {
 				fmt.Print("O ")
