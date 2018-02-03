@@ -23,7 +23,7 @@ func (f *Field) IndicateCell(y, x byte) {
 	} else {
 		f[row][col] = false
 	}
-	//f.DisableExcessCells()
+	fmt.Println(f.DisableExcessCells())
 	f.print() // <-- For debug
 }
 
@@ -57,7 +57,7 @@ func (f *Field) GetAvailableShips() Ships {
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize-1; j++ {
 			if f[i][j] == true {
-				if f[i-1][j] == true || f[i+1][j] == true {
+				if f[i][j-1] == true || f[i][j+1] == true {
 					shipLength++
 					seenCells[i][j] = true
 				}
@@ -113,7 +113,7 @@ func (f *Field) DisableExcessCells() bool {
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize; j++ {
 			if f[i][j] == true {
-				if f[i-1][j] == true || f[i+1][j] == true {
+				if f[i][j-1] == true || f[i][j+1] == true {
 					shipLength++
 					seenCells[i][j] = true
 				}
