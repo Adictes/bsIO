@@ -48,7 +48,7 @@ func (f *Field) IndicateCell(y, x byte) {
 	} else {
 		f[row][col] = false
 	}
-	fmt.Println(f.DisableExcessCells())
+	fmt.Println(f.CheckPositionOfShips())
 	f.print() // <-- For debug
 }
 
@@ -129,9 +129,9 @@ func (f *Field) GetNotAccessibleCells() (coords []string) {
 	return coords
 }
 
-// DisableExcessCells disables cells, which cannot be ship's place
-func (f *Field) DisableExcessCells() bool {
-	var numberOfPoints = 20
+// CheckPositionOfShips
+func (f *Field) CheckPositionOfShips() bool {
+	var a [4]int8
 	var seenCells [12][12]bool
 	var shipLength = 0
 	// Пройдемся сначала по горизонтали
@@ -151,7 +151,7 @@ func (f *Field) DisableExcessCells() bool {
 						return false
 					}
 				}
-				numberOfPoints = numberOfPoints - shipLength
+				a[4-shipLength]++
 				shipLength = 0
 			}
 		}
@@ -173,12 +173,13 @@ func (f *Field) DisableExcessCells() bool {
 						return false
 					}
 				}
-				numberOfPoints = numberOfPoints - shipLength
+				a[4-shipLength]++
 				shipLength = 0
 			}
 		}
 	}
-	if numberOfPoints == 0 {
+	fmt.Println(a)
+	if a[0] != 1 || a[1] != 2 || a[2] != 3 || a[3] != 4 {
 		return false
 	}
 	return true
