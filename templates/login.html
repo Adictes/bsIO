@@ -39,6 +39,12 @@
             if (form.username.value.trim() == "") {
                 alert("Username is empty");
                 return false;
+            }else if (form.username.value.trim().length >= 20){
+                alert("Username переполнен");
+                return false;
+            }else if (/[ёЁ!@:;}{)(,?&^$#№<>%\. ]/.test(form.username.value.trim())){
+                alert("Есть запрёщенные символы");
+                return false;
             }
         }
     </script>
