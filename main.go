@@ -14,6 +14,7 @@ var (
 	store  *sessions.CookieStore
 	t      *template.Template
 	fields map[string]*Field
+	bot    Field
 )
 
 func init() {
@@ -49,7 +50,6 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	fields[session.Values["username"].(string)] = &Field{}
-	fields[session.Values["username"].(string)].Init()
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
 
