@@ -5,11 +5,36 @@ import (
 	"strconv"
 )
 
+// Deliberately increased fieldSize for more convenient checking the field
+const fieldSize = 12
+
 // Field is a game field
 type Field [fieldSize][fieldSize]bool
 
-// Deliberately increased fieldSize for more convenient checking the field
-const fieldSize = 12
+/* Cell is a struct with 2 filds:
+// busy: true if ship is already standing at this cell
+// access: true if ship can be placed at this cell
+type Cell struct {
+	busy   bool
+	access bool
+}
+
+func (c Cell) isBusy() bool {
+	return c.busy
+}
+
+func (c Cell) isAccessible() bool {
+	return c.access
+}
+
+// Init initializes the game field
+func (f *Field) Init() {
+	for i := 0; i < fieldSize; i++ {
+		for j := 0; j < fieldSize; j++ {
+			f[i][j] = Cell{busy: false, access: true}
+		}
+	}
+}*/
 
 // IndicateCell indicates the cell on field
 func (f *Field) IndicateCell(y, x byte) {
@@ -33,19 +58,6 @@ type Ships struct {
 	TwoDecker    int
 	ThreeDecker  int
 	FourDecker   int
-}
-
-// shrink check length of ship and remove one
-func (s *Ships) shrink(length int) {
-	if length == 1 {
-		s.SingleDecker--
-	} else if length == 2 {
-		s.TwoDecker--
-	} else if length == 3 {
-		s.ThreeDecker--
-	} else if length == 4 {
-		s.FourDecker--
-	}
 }
 
 // GetAvailableShips returns available ships as struct
@@ -89,6 +101,19 @@ func (f *Field) GetAvailableShips() Ships {
 		ships.shrink(shipLength)
 	}
 	return ships
+}
+
+// shrink check length of ship and remove one
+func (s *Ships) shrink(length int) {
+	if length == 1 {
+		s.SingleDecker--
+	} else if length == 2 {
+		s.TwoDecker--
+	} else if length == 3 {
+		s.ThreeDecker--
+	} else if length == 4 {
+		s.FourDecker--
+	}
 }
 
 // GetNotAccessibleCells returns not accessible cells, by searching through all field
