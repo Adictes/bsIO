@@ -112,7 +112,6 @@ func (f *Field) DisableExcessCells() bool {
 	// Пройдемся сначала по горизонтали
 	for i := 1; i < fieldSize-1; i++ {
 		for j := 1; j < fieldSize; j++ {
-			flag = false
 			if f[i][j] == true {
 				if f[i-1][j] == true || f[i+1][j] == true {
 					shipLength++
