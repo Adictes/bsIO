@@ -6,28 +6,25 @@ import (
 
 func TestGetAvailableShips(t *testing.T) {
 	var f Field
-	f.Init()
 
 	expected := Ships{4, 3, 2, 1}
 	if got := f.GetAvailableShips(); got != expected {
 		t.Errorf("Got: %v , expected: %v", got, expected)
 	}
 
-	f.Init()
-
-	f[1] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, false, false, true, false, false, true, true, true, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
 	}
 
 	expected = Ships{2, 3, 1, 1}
@@ -35,63 +32,19 @@ func TestGetAvailableShips(t *testing.T) {
 		t.Errorf("Got: %v , expected: %v", got, expected)
 	}
 
-	f.Init()
-
-	f[1] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-	}
-	f[8] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-	}
-	f[9] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-	}
-	f[10] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, true, true, true, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
 	}
 
 	expected = Ships{4, 3, 1, 0}
@@ -99,138 +52,23 @@ func TestGetAvailableShips(t *testing.T) {
 		t.Errorf("Got: %v , expected: %v", got, expected)
 	}
 
-	f.Init()
-
-	f[2] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-	}
-	f[3] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-	}
-	f[4] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-	}
-	f[5] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: false, access: true},
-	}
-	f[6] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-	}
-	f[7] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-	}
-	f[8] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-	}
-	f[9] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-	}
-	f[10] = [fieldSize]Cell{
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: true, access: false},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
-		{busy: false, access: true},
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, true, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, false, true, false, false, true, false, true, true, false},
+		{false, false, false, false, true, false, false, false, false, false, false, false},
+		{false, true, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, true, true, true, false, false, true, false, false, false},
+		{false, false, false, false, false, false, false, false, true, false, false, false},
+		{false, false, true, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
 	}
 
 	expected = Ships{0, 0, 0, 0}
 	if got := f.GetAvailableShips(); got != expected {
 		t.Errorf("Got: %v , expected: %v", got, expected)
 	}
-
 }
