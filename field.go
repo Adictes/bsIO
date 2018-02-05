@@ -11,31 +11,6 @@ const fieldSize = 12
 // Field is a game field
 type Field [fieldSize][fieldSize]bool
 
-/* Cell is a struct with 2 filds:
-// busy: true if ship is already standing at this cell
-// access: true if ship can be placed at this cell
-type Cell struct {
-	busy   bool
-	access bool
-}
-
-func (c Cell) isBusy() bool {
-	return c.busy
-}
-
-func (c Cell) isAccessible() bool {
-	return c.access
-}
-
-// Init initializes the game field
-func (f *Field) Init() {
-	for i := 0; i < fieldSize; i++ {
-		for j := 0; j < fieldSize; j++ {
-			f[i][j] = Cell{busy: false, access: true}
-		}
-	}
-}*/
-
 // IndicateCell indicates the cell on field
 func (f *Field) IndicateCell(y, x byte) {
 	row, _ := strconv.Atoi(string(y))
@@ -109,17 +84,15 @@ func (s *Ships) shrink(length int) {
 	}
 }
 
-// // GetNotAccessibleCells returns not accessible cells, by searching through all field
-// func (f *Field) GetNotAccessibleCells() (coords []string) {
-// 	for i := 1; i < fieldSize-1; i++ {
-// 		for j := 1; j < fieldSize-1; j++ {
-// 			if f[i][j] == false {
-// 				coords = append(coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
-// 			}
-// 		}
-// 	}
-// 	return coords
-// }
+// Hit returns true if player hit the ship, false if doesn't
+func (f *Field) Hit(y, x byte) bool {
+	row, _ := strconv.Atoi(string(y))
+	col, _ := strconv.Atoi(string(x))
+
+	row, col = row+1, col+1
+
+	return f[row][col]
+}
 
 // CheckPositionOfShips checks correctness of ships setting
 func (f *Field) CheckPositionOfShips() bool {

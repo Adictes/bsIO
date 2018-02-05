@@ -144,7 +144,12 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		}
 		log.Println(string(msg))
 		enemyName := GetRandomEnemy(session.Values["username"].(string))
-		fields[enemyName].IndicateCell(msg[1], msg[3])
+		if fields[enemyName].Hit(msg[1], msg[3]) == true {
+			// Проверка на полное сбитие, если так, то нужно отметить все ближайшие ячейки
+		} else {
+			// Отметить этот промах
+		}
+		fields[enemyName].print() // <-- for debug
 	}
 }
 
@@ -169,7 +174,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			log.Println(err)
 			return
 		}
-		// Here function that checks validation
+
 		if fields[session.Values["username"].(string)].CheckPositionOfShips() == true {
 			readyToPlay = append(readyToPlay, session.Values["username"].(string))
 			// Сообщить на web
@@ -179,8 +184,6 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}
 
 		log.Println(string(msg) + " by " + session.Values["username"].(string))
-
-		// Here selection of players
 		if len(readyToPlay) < 2 {
 			log.Println("Nobody want to play")
 			continue
