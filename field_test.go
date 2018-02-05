@@ -72,3 +72,92 @@ func TestGetAvailableShips(t *testing.T) {
 		t.Errorf("Got: %v , expected: %v", got, expected)
 	}
 }
+
+func TestCheckPositionOfShips(t *testing.T) {
+	var f Field
+
+	expected := false
+	if got := f.CheckPositionOfShips(); got != expected {
+		t.Errorf("Got: %v , expected: %v", got, expected)
+	}
+
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, true, true, true, true, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+	}
+
+	expected = false
+	if got := f.CheckPositionOfShips(); got != expected {
+		t.Errorf("Got: %v , expected: %v", got, expected)
+	}
+
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, true, true, true, true, true, false, false, false},
+		{false, true, true, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, false, true, false, false, true, false, true, true, false},
+		{false, false, false, false, true, false, false, false, false, false, false, false},
+		{false, true, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, true, true, true, false, false, true, false, false, false},
+		{false, false, false, false, false, false, false, false, true, false, false, false},
+		{false, false, true, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+	}
+
+	expected = false
+	if got := f.CheckPositionOfShips(); got != expected {
+		t.Errorf("Got: %v , expected: %v", got, expected)
+	}
+
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, false, false, false, false, false, false, false, false, false, false},
+		{false, false, true, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, false, true, false, false, true, false, false, false, false},
+		{false, false, false, false, true, false, false, true, false, true, true, false},
+		{false, false, false, false, true, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, true, true, true, false, false, true, false, false, false},
+		{false, false, false, false, false, false, false, false, true, false, false, false},
+		{false, true, true, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+	}
+
+	expected = false
+	if got := f.CheckPositionOfShips(); got != expected {
+		t.Errorf("Got: %v , expected: %v", got, expected)
+	}
+
+	f = Field{
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, true, true, true, false, true, true, true, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+		{false, true, false, false, false, false, false, false, false, false, true, false},
+		{false, false, false, false, false, false, false, false, false, false, true, false},
+		{false, true, false, true, false, true, false, true, true, false, false, false},
+		{false, false, false, false, false, false, false, false, false, false, false, false},
+	}
+
+	expected = true
+	if got := f.CheckPositionOfShips(); got != expected {
+		t.Errorf("Got: %v , expected: %v", got, expected)
+	}
+}
