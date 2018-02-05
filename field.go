@@ -67,38 +67,31 @@ func (f *Field) GetAvailableShips() Ships {
 	var shipLength = 0
 	// Пройдемся сначала по горизонтали
 	for i := 1; i < fieldSize-1; i++ {
-		for j := 1; j < fieldSize-1; j++ {
+		for j := 1; j < fieldSize; j++ {
 			if f[i][j] == true {
 				if f[i][j-1] == true || f[i][j+1] == true {
 					shipLength++
 					seenCells[i][j] = true
 				}
-			} else {
+			} else if shipLength != 0 {
 				ships.shrink(shipLength)
 				shipLength = 0
 			}
 		}
 	}
-	if shipLength != 0 {
-		ships.shrink(shipLength)
-		shipLength = 0
-	}
 	// Теперь по вертикали
 	for j := 1; j < fieldSize-1; j++ {
-		for i := 1; i < fieldSize-1; i++ {
+		for i := 1; i < fieldSize; i++ {
 			if seenCells[i][j] == true {
 				continue
 			}
 			if f[i][j] == true {
 				shipLength++
-			} else {
+			} else if shipLength != 0 {
 				ships.shrink(shipLength)
 				shipLength = 0
 			}
 		}
-	}
-	if shipLength != 0 {
-		ships.shrink(shipLength)
 	}
 	return ships
 }
@@ -116,22 +109,24 @@ func (s *Ships) shrink(length int) {
 	}
 }
 
-// GetNotAccessibleCells returns not accessible cells, by searching through all field
-func (f *Field) GetNotAccessibleCells() (coords []string) {
-	for i := 1; i < fieldSize-1; i++ {
-		for j := 1; j < fieldSize-1; j++ {
-			// Если ячейка не занята и не доступна
-			if f[i][j] == false {
-				coords = append(coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
-			}
-		}
-	}
-	return coords
-}
+// // GetNotAccessibleCells returns not accessible cells, by searching through all field
+// func (f *Field) GetNotAccessibleCells() (coords []string) {
+// 	for i := 1; i < fieldSize-1; i++ {
+// 		for j := 1; j < fieldSize-1; j++ {
+// 			if f[i][j] == false {
+// 				coords = append(coords, strconv.Itoa(i-1)+"-"+strconv.Itoa(j-1))
+// 			}
+// 		}
+// 	}
+// 	return coords
+// }
 
-// CheckPositionOfShips
+// CheckPositionOfShips checks correctness of ships setting
 func (f *Field) CheckPositionOfShips() bool {
-	var a [4]int8
+	if (f.GetAvailableShips() != Ships{0, 0, 0, 0}) {
+		return false
+	}
+
 	var seenCells [12][12]bool
 	var shipLength = 0
 	// Пройдемся сначала по горизонтали
@@ -142,16 +137,14 @@ func (f *Field) CheckPositionOfShips() bool {
 					shipLength++
 					seenCells[i][j] = true
 				}
+			} else if shipLength > 4 {
+				return false
 			} else if shipLength != 0 {
-				if f[i][j-shipLength-1] == true || f[i][j] == true {
-					return false
-				}
 				for k := j - shipLength - 1; k <= j; k++ {
 					if f[i-1][k] == true || f[i+1][k] == true {
 						return false
 					}
 				}
-				a[4-shipLength]++
 				shipLength = 0
 			}
 		}
@@ -164,23 +157,17 @@ func (f *Field) CheckPositionOfShips() bool {
 			}
 			if f[i][j] == true {
 				shipLength++
+			} else if shipLength > 4 {
+				return false
 			} else if shipLength != 0 {
-				if f[i-shipLength-1][j] == true || f[i][j] == true {
-					return false
-				}
 				for k := i - shipLength - 1; k <= i; k++ {
 					if f[k][j-1] == true || f[k][j+1] == true {
 						return false
 					}
 				}
-				a[4-shipLength]++
 				shipLength = 0
 			}
 		}
-	}
-	fmt.Println(a)
-	if a[0] != 1 || a[1] != 2 || a[2] != 3 || a[3] != 4 {
-		return false
 	}
 	return true
 }
