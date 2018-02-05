@@ -119,6 +119,12 @@ func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
+//
+type StrickenShips struct {
+	Ambient []string
+	Hitted  string
+}
+
 // HitEnemyShips
 func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session, err := store.Get(r, "session")
@@ -147,7 +153,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		if fields[enemyName].Hit(msg[1], msg[3]) == true {
 			// Проверка на полное сбитие, если так, то нужно отметить все ближайшие ячейки
 		} else {
-			// Отметить этот промах
+			ws.WriteJSON(StrickenShips{Ambient: []string{string(msg)}})
 		}
 		fields[enemyName].print() // <-- for debug
 	}

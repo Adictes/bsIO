@@ -362,6 +362,18 @@
 
         var hes = new WebSocket("ws://localhost:8080/hes");
 
+        hes.onmessage = function (event) {
+            var data = JSON.parse(event.data);
+
+            if (data.Hitted != "") {
+                document.getElementById(data.Hitted).style.backgroundColor = "#337ab7";
+            }
+
+            for (i in data.Ambient) {
+                document.getElementById(data.Ambient[i]).style.backgroundColor = "#ffccff";
+            }
+        }
+
         function hit(cell) {
             hes.send(cell);
         }
