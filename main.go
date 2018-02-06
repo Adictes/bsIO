@@ -16,7 +16,7 @@ var (
 	store       *sessions.CookieStore
 	curGames    map[string]string // Map: username to username, that now playing
 	fields      map[string]*Field // Game's fields assigned to users by their names
-	readyToPlay []string          // Users that ready to play
+	readyToPlay chan string       // User that ready to play
 )
 
 func init() {
@@ -24,7 +24,7 @@ func init() {
 	store = sessions.NewCookieStore([]byte("very-secret-key"))
 	curGames = make(map[string]string)
 	fields = make(map[string]*Field)
-	readyToPlay = make([]string, 0)
+	readyToPlay = make(chan string, 1)
 }
 
 func main() {
@@ -149,13 +149,15 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 		log.Printf("User: %v hit %v cell\n", session.Values["username"].(string), string(msg))
 
-		enemyName := curGames[session.Values["username"].(string)]
-		if fields[enemyName].Hit(msg[1], msg[3]) == true {
+		enemy := FindEnemy(curGames, session.Values["username"].(string))
+		log.Printf("Вот такой противник - %v был найден игроку - %v\n", enemy, session.Values["username"].(string))
+
+		if fields[enemy].Hit(msg[1], msg[3]) == true {
 			// Проверка на полное сбитие, если так, то нужно отметить все ближайшие ячейки
 		} else {
 			ws.WriteJSON(StrickenShips{Ambient: []string{string(msg)}})
 		}
-		fields[enemyName].print() // <-- for debug
+		fields[enemy].print() // <-- for debug
 	}
 }
 
@@ -163,7 +165,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 // First of all, it checks whether player can to play or not.
 // He can't if he don't push the button 'I'm ready'.
 // After that, it checks right positions of ships.
-// If it's alraight it adds player to readyToPlay slice.
+// If it's alraight it adds player to readyToPlay chan.
 // Then if it found player that also want to play,
 // it adds him and they can to play.
 func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -186,22 +188,22 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 
-		if !contain(readyToPlay, session.Values["username"].(string)) {
-			if fields[session.Values["username"].(string)].CheckPositionOfShips() == true {
-				readyToPlay = append(readyToPlay, session.Values["username"].(string))
-				// Сообщить на web, что игра скоро начнется
-			} else {
-				// Сообщить на web, что корабли расставлены не верно
-				continue
-			}
+		if fields[session.Values["username"].(string)].CheckPositionOfShips() == true {
+			readyToPlay <- session.Values["username"].(string)
+		} else {
+			// Сообщить на web, что корабли расставлены не верно
+			continue
 		}
 
 		log.Printf("User: %v want to play\n", session.Values["username"].(string))
-		if len(readyToPlay) < 2 {
-			log.Println("Nobody want to play, please wait")
-		} else {
-			curGames[session.Values["username"].(string)] = GetRandomEnemy(session.Values["username"].(string))
-			delete(readyToPlay, session.Values["username"].(string))
+
+		select {
+		case un := <-readyToPlay:
+			if enemy := HaveAvailableGame(curGames, un); enemy != "" {
+				curGames[enemy] = un
+			} else {
+				curGames[un] = ""
+			}
 		}
 	}
 }
