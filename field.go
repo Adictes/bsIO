@@ -100,24 +100,24 @@ func (f *Field) Hit(y, x byte, gameField *Field) bool {
 		return false
 	}
 	if f[row][col-1] == true || f[row][col+1] == true {
-		for i = 0; f[row][col-i] == true; i++ {
+		for i = 1; f[row][col-i] == true; i++ {
 			if gameField[row][col-i] == false {
 				return false
 			}
 		}
-		for i = 0; f[row][col+i] == true; i++ {
+		for i = 1; f[row][col+i] == true; i++ {
 			if gameField[row][col+i] == false {
 				return false
 			}
 		}
 	} else {
-		for i = 0; f[row-1][col] == true; i++ {
-			if gameField[row-1][col] == false {
+		for i = 1; f[row-i][col] == true; i++ {
+			if gameField[row-i][col] == false {
 				return false
 			}
 		}
-		for i = 0; f[row+1][col] == true; i++ {
-			if gameField[row+1][col] == false {
+		for i = 1; f[row+i][col] == true; i++ {
+			if gameField[row+i][col] == false {
 				return false
 			}
 		}
