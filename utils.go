@@ -18,6 +18,22 @@ func GetRandomEnemy(currentUser string) string {
 	}
 }
 
+// delete removes 's' from 'ss'
+func delete(ss []string, s string) {
+	i := index(ss, s)
+	ss = append(ss[:i], ss[i+1:]...)
+}
+
+// index @TODO binary search
+func index(ss []string, s string) int {
+	for i, v := range ss {
+		if v == s {
+			return i
+		}
+	}
+	return -1
+}
+
 // contain says has 'ss' 's' or not
 func contain(ss []string, s string) bool {
 	for _, v := range ss {
