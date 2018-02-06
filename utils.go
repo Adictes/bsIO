@@ -1,18 +1,19 @@
 package main
 
 import (
-	"crypto/rand"
-	"math/big"
+	"math/rand"
+	"time"
 )
 
 // GetRandomEnemy returns enemy username
 func GetRandomEnemy(currentUser string) string {
+	rand.Seed(time.Now().Unix())
 	for {
-		i, _ := rand.Int(rand.Reader, big.NewInt(int64(len(readyToPlay))))
-		if currentUser == readyToPlay[i.Int64()] {
+		i := rand.Intn(len(readyToPlay))
+		if currentUser == readyToPlay[i] {
 			continue
 		} else {
-			return readyToPlay[i.Int64()]
+			return readyToPlay[i]
 		}
 	}
 }
