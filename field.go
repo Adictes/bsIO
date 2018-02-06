@@ -84,14 +84,45 @@ func (s *Ships) shrink(length int) {
 	}
 }
 
+func (f *Field) isHit(y, x byte, gameField *Field) bool {
+
+}
+
 // Hit returns true if player hit the ship, false if doesn't
-func (f *Field) Hit(y, x byte) bool {
+func (f *Field) Hit(y, x byte, gameField *Field) bool {
+	//gameField - поле, в которое игрок "стреляет"
 	row, _ := strconv.Atoi(string(y))
 	col, _ := strconv.Atoi(string(x))
 
 	row, col = row+1, col+1
 
-	return f[row][col]
+	if f[row][col-1] == false && f[row][col+1] == false && f[row-1][col] == false && f[row+1][col] == false {
+		return false
+	}
+	if f[row][col-1] == true || f[row][col+1] == true {
+		for i = 0; f[row][col-i] == true; i++ {
+			if gameField[row][col-i] == false {
+				return false
+			}
+		}
+		for i = 0; f[row][col+i] == true; i++ {
+			if gameField[row][col+i] == false {
+				return false
+			}
+		}
+	} else {
+		for i = 0; f[row-1][col] == true; i++ {
+			if gameField[row-1][col] == false {
+				return false
+			}
+		}
+		for i = 0; f[row+1][col] == true; i++ {
+			if gameField[row+1][col] == false {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // CheckPositionOfShips checks correctness of ships setting
