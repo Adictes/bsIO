@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,7 +17,8 @@ var (
 	store       *sessions.CookieStore
 	curGames    map[string]string // Map: username to username, that now playing
 	fields      map[string]*Field // Game's fields assigned to users by their names
-	readyToPlay chan string       // User that ready to play
+	shots       map[string]*Field
+	readyToPlay chan string // User that ready to play
 )
 
 func init() {
@@ -24,6 +26,7 @@ func init() {
 	store = sessions.NewCookieStore([]byte("very-secret-key"))
 	curGames = make(map[string]string)
 	fields = make(map[string]*Field)
+	shots = make(map[string]*Field)
 	readyToPlay = make(chan string, 1)
 }
 
@@ -122,8 +125,8 @@ func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // StrickenShips is used as JSON wrapper for sending it to websocket
 type StrickenShips struct {
-	Ambient []string
-	Hitted  string
+	Ambient []string //те ячейки, которые уничтожились вокруг корабля(e'число'-'число')
+	Hitted  string   //только попадания
 }
 
 // HitEnemyShips checks hit on enemy's field and send this data to websocket
@@ -152,8 +155,21 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		enemy := FindEnemy(curGames, session.Values["username"].(string))
 		log.Printf("Вот такой противник - %v был найден игроку - %v\n", enemy, session.Values["username"].(string))
 
+		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		if fields[enemy].Hit(msg[1], msg[3]) == true {
 			// Проверка на полное сбитие, если так, то нужно отметить все ближайшие ячейки
+			flag, startRow, startCol, endRow, endCol := fields[enemy].isPadded(msg[1], msg[3], shots[session.Values["username"].(string)])
+			if flag == true {
+				s := StrickenShips{Hitted: string(msg)}
+				for i := startRow - 1; i <= endRow+1; i++ {
+					for j := startCol - 1; j <= endCol+1; j++ {
+						s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, j))
+					}
+				}
+				ws.WriteJSON(s)
+			} else {
+				ws.WriteJSON(StrickenShips{Hitted: string(msg)})
+			}
 		} else {
 			ws.WriteJSON(StrickenShips{Ambient: []string{string(msg)}})
 		}
@@ -165,7 +181,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 // First of all, it checks whether player can to play or not.
 // He can't if he don't push the button 'I'm ready'.
 // After that, it checks right positions of ships.
-// If it's alraight it adds player to readyToPlay chan.
+// If it's allright it adds player to readyToPlay chan.
 // Then if it found player that also want to play,
 // it adds him and they can to play.
 func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
