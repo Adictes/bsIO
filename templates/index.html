@@ -370,6 +370,11 @@
                 }
 
                 for (i in data.Ambient) {
+                    if (data.Ambient[i][1] == '-' || data.Ambient[i][3] == '-' ||
+                        (data.Ambient[i][1] == '1' && data.Ambient[i][2] == '0') ||
+                        (data.Ambient[i][3] == '1' && data.Ambient[i][4] == '0')) {
+                        continue;
+                    }
                     document.getElementById(data.Ambient[i]).style.backgroundColor = "#ffccff";
                     document.getElementById(data.Ambient[i]).removeAttribute("onclick");
                 }
