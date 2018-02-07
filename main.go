@@ -163,12 +163,24 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		if fields[enemy].Hit(msg[1], msg[3]) == true {
 			flag, startRow, startCol, endRow, endCol := fields[enemy].isPadded(msg[1], msg[3], shots[session.Values["username"].(string)])
+			startRow, startCol, endRow, endCol = startRow-1, startCol-1, endRow-1, endCol-1
+			fmt.Println(startRow, startCol, endRow, endCol)
 			if flag == true {
 				s := StrickenShips{Hitted: string(msg)}
-				for i := startRow - 1; i <= endRow+1; i++ {
-					for j := startCol - 1; j <= endCol+1; j++ {
-						s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, j))
+				if startCol == endCol {
+					for i := startRow - 1; i <= endRow+1; i++ {
+						s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, startCol-1))
+						s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, startCol+1))
 					}
+					s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", startRow-1, startCol))
+					s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", endRow+1, startCol))
+				} else {
+					for i := startCol - 1; i <= endCol+1; i++ {
+						s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", startRow-1, i))
+						s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", startRow+1, i))
+					}
+					s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", startRow, startCol-1))
+					s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", startRow, endCol+1))
 				}
 				ws.WriteJSON(s)
 				ws.WriteJSON(fields[enemy].GetAvailableShips())

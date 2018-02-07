@@ -23,7 +23,7 @@ func (f *Field) IndicateCell(y, x byte) {
 	} else {
 		f[row][col] = false
 	}
-	f.print() // <-- For debug
+	//f.print() // <-- For debug
 }
 
 // Ships is keeping number of available ships
@@ -88,37 +88,34 @@ func (f *Field) isPadded(y, x byte, gameField *Field) (bool, int, int, int, int)
 	col, _ := strconv.Atoi(string(x))
 
 	row, col = row+1, col+1
-	var i, startRow, startCol, endRow, endCol int
+	i := 1
+	startRow, startCol, endRow, endCol := row, col, row, col
 	if f[row][col-1] == true || f[row][col+1] == true {
 		for i = 1; f[row][col-i] == true; i++ {
 			if gameField[row][col-i] == false {
 				return false, 0, 0, 0, 0
 			}
 		}
-		startCol = col + i + 1
+		startCol = startCol - i + 1
 		for i = 1; f[row][col+i] == true; i++ {
 			if gameField[row][col+i] == false {
 				return false, 0, 0, 0, 0
 			}
 		}
-		endCol = col + i - 1
-		startRow = row
-		endRow = row
+		endCol = endCol + i - 1
 	} else {
 		for i = 1; f[row-i][col] == true; i++ {
 			if gameField[row-i][col] == false {
 				return false, 0, 0, 0, 0
 			}
 		}
-		startRow = row + i + 1
+		startRow = startRow - i + 1
 		for i = 1; f[row+i][col] == true; i++ {
 			if gameField[row+i][col] == false {
 				return false, 0, 0, 0, 0
 			}
 		}
-		endRow = row + i - 1
-		startCol = col
-		endCol = col
+		endRow = endRow + i - 1
 	}
 	return true, startRow, startCol, endRow, endCol
 }
