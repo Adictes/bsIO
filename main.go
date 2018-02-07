@@ -60,6 +60,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	fields[session.Values["username"].(string)] = &Field{}
+	shots[session.Values["username"].(string)] = &Field{}
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
 
@@ -125,8 +126,8 @@ func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // StrickenShips is used as JSON wrapper for sending it to websocket
 type StrickenShips struct {
-	Ambient []string //те ячейки, которые уничтожились вокруг корабля(e'число'-'число')
-	Hitted  string   //только попадания
+	Ambient []string
+	Hitted  string
 }
 
 // HitEnemyShips checks hit on enemy's field and send this data to websocket
@@ -153,11 +154,14 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		log.Printf("User: %v hit %v cell\n", session.Values["username"].(string), string(msg))
 
 		enemy := FindEnemy(curGames, session.Values["username"].(string))
+		if enemy == "" {
+			// Значит не с кем поиграть, ждем
+			continue
+		}
 		log.Printf("Вот такой противник - %v был найден игроку - %v\n", enemy, session.Values["username"].(string))
 
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		if fields[enemy].Hit(msg[1], msg[3]) == true {
-			// Проверка на полное сбитие, если так, то нужно отметить все ближайшие ячейки
 			flag, startRow, startCol, endRow, endCol := fields[enemy].isPadded(msg[1], msg[3], shots[session.Values["username"].(string)])
 			if flag == true {
 				s := StrickenShips{Hitted: string(msg)}
@@ -167,6 +171,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 					}
 				}
 				ws.WriteJSON(s)
+				ws.WriteJSON(fields[enemy].GetAvailableShips())
 			} else {
 				ws.WriteJSON(StrickenShips{Hitted: string(msg)})
 			}
@@ -181,7 +186,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 // First of all, it checks whether player can to play or not.
 // He can't if he don't push the button 'I'm ready'.
 // After that, it checks right positions of ships.
-// If it's allright it adds player to readyToPlay chan.
+// If it's alright it adds player to readyToPlay chan.
 // Then if it found player that also want to play,
 // it adds him and they can to play.
 func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -206,8 +211,9 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 		if fields[session.Values["username"].(string)].CheckPositionOfShips() == true {
 			readyToPlay <- session.Values["username"].(string)
+			ws.WriteJSON(true)
 		} else {
-			// Сообщить на web, что корабли расставлены не верно
+			ws.WriteJSON(false)
 			continue
 		}
 

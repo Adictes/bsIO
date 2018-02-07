@@ -23,7 +23,6 @@ func (f *Field) IndicateCell(y, x byte) {
 	} else {
 		f[row][col] = false
 	}
-	fmt.Println(f.CheckPositionOfShips())
 	f.print() // <-- For debug
 }
 
@@ -126,7 +125,6 @@ func (f *Field) isPadded(y, x byte, gameField *Field) (bool, int, int, int, int)
 
 // Hit returns true if player hit the ship, false if doesn't
 func (f *Field) Hit(y, x byte) bool {
-	//gameField - поле, в которое игрок "стреляет"
 	row, _ := strconv.Atoi(string(y))
 	col, _ := strconv.Atoi(string(x))
 
