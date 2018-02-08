@@ -19,6 +19,7 @@ var (
 	fields      map[string]*Field // Game's fields assigned to users by their names
 	shots       map[string]*Field
 	readyToPlay chan string // User that ready to play
+	turn        map[string]chan bool
 )
 
 func init() {
@@ -28,6 +29,7 @@ func init() {
 	fields = make(map[string]*Field)
 	shots = make(map[string]*Field)
 	readyToPlay = make(chan string, 1)
+	turn = make(map[string]chan bool)
 }
 
 func main() {
@@ -61,6 +63,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	fields[session.Values["username"].(string)] = &Field{}
 	shots[session.Values["username"].(string)] = &Field{}
+	turn[session.Values["username"].(string)] = make(chan bool, 1)
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
 
@@ -145,6 +148,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	defer ws.Close()
 
 	for {
+		<-turn[session.Values["username"].(string)]
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			log.Println(err)
@@ -156,15 +160,14 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		enemy := FindEnemy(curGames, session.Values["username"].(string))
 		if enemy == "" {
 			// Значит не с кем поиграть, ждем
+			turn[session.Values["username"].(string)] <- true
 			continue
 		}
 		log.Printf("Вот такой противник - %v был найден игроку - %v\n", enemy, session.Values["username"].(string))
 
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
-		if fields[enemy].Hit(msg[1], msg[3]) == true {
+		if fields[enemy].isHitted(msg[1], msg[3]) {
 			flag, startRow, startCol, endRow, endCol := fields[enemy].isPadded(msg[1], msg[3], shots[session.Values["username"].(string)])
-			startRow, startCol, endRow, endCol = startRow-1, startCol-1, endRow-1, endCol-1
-			fmt.Println(startRow, startCol, endRow, endCol)
 			if flag == true {
 				s := StrickenShips{Hitted: string(msg)}
 				if startCol == endCol {
@@ -187,9 +190,12 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			} else {
 				ws.WriteJSON(StrickenShips{Hitted: string(msg)})
 			}
+			turn[session.Values["username"].(string)] <- true
 		} else {
 			ws.WriteJSON(StrickenShips{Ambient: []string{string(msg)}})
+			turn[enemy] <- true
 		}
+
 		fields[enemy].print() // <-- for debug
 	}
 }
@@ -237,6 +243,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				curGames[enemy] = un
 			} else {
 				curGames[un] = ""
+				turn[un] <- true
 			}
 		}
 	}

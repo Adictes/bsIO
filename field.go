@@ -117,11 +117,11 @@ func (f *Field) isPadded(y, x byte, gameField *Field) (bool, int, int, int, int)
 		}
 		endRow = endRow + i - 1
 	}
-	return true, startRow, startCol, endRow, endCol
+	return true, startRow - 1, startCol - 1, endRow - 1, endCol - 1
 }
 
-// Hit returns true if player hit the ship, false if doesn't
-func (f *Field) Hit(y, x byte) bool {
+// isHitted returns true if player hit the ship, false if doesn't
+func (f *Field) isHitted(y, x byte) bool {
 	row, _ := strconv.Atoi(string(y))
 	col, _ := strconv.Atoi(string(x))
 
