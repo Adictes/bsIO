@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
@@ -134,29 +132,6 @@ type StrickenShips struct {
 	Hitted  string
 }
 
-func noNameFunction(f map[string]*Field, enemy string, msg []byte) StrickenShips {
-	direction, k, l := f[enemy].getPos(msg[1], msg[3])
-	row, _ := strconv.Atoi(string(msg[1]))
-	col, _ := strconv.Atoi(string(msg[3]))
-	s := StrickenShips{Hitted: string(msg)}
-	if direction == true {
-		for i := row + k - 1; i <= row+l+1; i++ {
-			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, col-1))
-			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, col+1))
-		}
-		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+k-1, col))
-		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+l+1, col))
-	} else {
-		for i := col + k - 1; i <= col+l+1; i++ {
-			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row-1, i))
-			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+1, i))
-		}
-		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col+k-1))
-		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col+l+1))
-	}
-	return s
-}
-
 // HitEnemyShips checks hit on enemy's field and send this data to websocket
 func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session, err := store.Get(r, "session")
@@ -195,9 +170,8 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		if fields[enemy].isHitted(msg[1], msg[3]) {
-			flag := fields[enemy].isDestroyed(msg[1], msg[3], shots[session.Values["username"].(string)])
-			if flag == true {
-				ws.WriteJSON(noNameFunction(fields, enemy, msg))
+			if fields[enemy].isDestroyed(msg[1], msg[3], shots[session.Values["username"].(string)]) {
+				ws.WriteJSON(fields[enemy].GetStrickenShips(msg))
 				ws.WriteJSON(fields[enemy].GetAvailableShips())
 			} else {
 				ws.WriteJSON(StrickenShips{Hitted: string(msg)})

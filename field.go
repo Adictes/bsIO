@@ -116,15 +116,38 @@ func (f *Field) isDestroyed(y, x byte, gameField *Field) bool {
 	return true
 }
 
-// getPos returns position of ship: false if the ship is horizontal and
-//true if the ship is vertical; i,j - positions of shift to left and right
-func (f *Field) getPos(y, x byte) (bool, int, int) {
-	row, _ := strconv.Atoi(string(y))
-	col, _ := strconv.Atoi(string(x))
+func (f *Field) GetStrickenShips(msg []byte) StrickenShips {
+	row, _ := strconv.Atoi(string(msg[1]))
+	col, _ := strconv.Atoi(string(msg[3]))
 
-	row, col = row+1, col+1
+	direction, k, l := f.GetOrientation(row, col)
+
+	s := StrickenShips{Hitted: string(msg)}
+
+	if direction == true {
+		for i := row + k - 1; i <= row+l+1; i++ {
+			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, col-1))
+			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, col+1))
+		}
+		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+k-1, col))
+		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+l+1, col))
+	} else {
+		for i := col + k - 1; i <= col+l+1; i++ {
+			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row-1, i))
+			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+1, i))
+		}
+		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col+k-1))
+		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col+l+1))
+	}
+	return s
+}
+
+// GetOrientation returns orientation of ship: false if the ship is horizontal and
+// true if the ship is vertical; i,j - positions of shift to left and right
+func (f *Field) GetOrientation(y, x int) (bool, int, int) {
+	row, col := y+1, x+1
+
 	var i, j int
-
 	if f[row][col-1] == true || f[row][col+1] == true {
 		for i = 1; f[row][col-i] == true; i++ {
 		}
