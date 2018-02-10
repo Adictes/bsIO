@@ -83,41 +83,61 @@ func (s *Ships) shrink(length int) {
 	}
 }
 
-func (f *Field) isPadded(y, x byte, gameField *Field) (bool, int, int, int, int) {
+// isDestroyed returns true if player hitted the last part of ship, false if doesn't
+func (f *Field) isDestroyed(y, x byte, gameField *Field) bool {
 	row, _ := strconv.Atoi(string(y))
 	col, _ := strconv.Atoi(string(x))
 
 	row, col = row+1, col+1
-	i := 1
-	startRow, startCol, endRow, endCol := row, col, row, col
+	var i int
 	if f[row][col-1] == true || f[row][col+1] == true {
 		for i = 1; f[row][col-i] == true; i++ {
 			if gameField[row][col-i] == false {
-				return false, 0, 0, 0, 0
+				return false
 			}
 		}
-		startCol = startCol - i + 1
 		for i = 1; f[row][col+i] == true; i++ {
 			if gameField[row][col+i] == false {
-				return false, 0, 0, 0, 0
+				return false
 			}
 		}
-		endCol = endCol + i - 1
 	} else {
 		for i = 1; f[row-i][col] == true; i++ {
 			if gameField[row-i][col] == false {
-				return false, 0, 0, 0, 0
+				return false
 			}
 		}
-		startRow = startRow - i + 1
 		for i = 1; f[row+i][col] == true; i++ {
 			if gameField[row+i][col] == false {
-				return false, 0, 0, 0, 0
+				return false
 			}
 		}
-		endRow = endRow + i - 1
 	}
-	return true, startRow - 1, startCol - 1, endRow - 1, endCol - 1
+	return true
+}
+
+// getPos returns position of ship: false if the ship is horizontal and
+//true if the ship is vertical; i,j - positions of shift to left and right
+func (f *Field) getPos(y, x byte) (bool, int, int) {
+	row, _ := strconv.Atoi(string(y))
+	col, _ := strconv.Atoi(string(x))
+
+	row, col = row+1, col+1
+	var i, j int
+
+	if f[row][col-1] == true || f[row][col+1] == true {
+		for i = 1; f[row][col-i] == true; i++ {
+		}
+		for j = 1; f[row][col+j] == true; j++ {
+		}
+		return false, -i + 1, j - 1
+	} else {
+		for i = 1; f[row-i][col] == true; i++ {
+		}
+		for j = 1; f[row+j][col] == true; j++ {
+		}
+		return true, -i + 1, j - 1
+	}
 }
 
 // isHitted returns true if player hit the ship, false if doesn't
