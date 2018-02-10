@@ -88,27 +88,17 @@ func (f *Field) isDestroyed(y, x byte, gameField *Field) bool {
 	row, _ := strconv.Atoi(string(y))
 	col, _ := strconv.Atoi(string(x))
 
+	direction, k, l := f.GetOrientation(row, col)
 	row, col = row+1, col+1
-	var i int
-	if f[row][col-1] == true || f[row][col+1] == true {
-		for i = 1; f[row][col-i] == true; i++ {
-			if gameField[row][col-i] == false {
-				return false
-			}
-		}
-		for i = 1; f[row][col+i] == true; i++ {
-			if gameField[row][col+i] == false {
+	if direction == true {
+		for i := row - k; i <= row+l; i++ {
+			if gameField[i][col] == false {
 				return false
 			}
 		}
 	} else {
-		for i = 1; f[row-i][col] == true; i++ {
-			if gameField[row-i][col] == false {
-				return false
-			}
-		}
-		for i = 1; f[row+i][col] == true; i++ {
-			if gameField[row+i][col] == false {
+		for i := col - k; i <= col+l; i++ {
+			if gameField[row][i] == false {
 				return false
 			}
 		}
@@ -116,28 +106,34 @@ func (f *Field) isDestroyed(y, x byte, gameField *Field) bool {
 	return true
 }
 
+//GetStrickenShips
 func (f *Field) GetStrickenShips(msg []byte) StrickenShips {
 	row, _ := strconv.Atoi(string(msg[1]))
 	col, _ := strconv.Atoi(string(msg[3]))
 
 	direction, k, l := f.GetOrientation(row, col)
-
 	s := StrickenShips{Hitted: string(msg)}
 
 	if direction == true {
-		for i := row + k - 1; i <= row+l+1; i++ {
+		for i := row - k - 1; i <= row+l+1; i++ {
 			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, col-1))
 			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", i, col+1))
 		}
-		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+k-1, col))
+		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row-k-1, col))
 		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+l+1, col))
+		for i := row - k; i <= row+l; i++ {
+			f[i+1][col+1] = false
+		}
 	} else {
-		for i := col + k - 1; i <= col+l+1; i++ {
+		for i := col - k - 1; i <= col+l+1; i++ {
 			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row-1, i))
 			s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row+1, i))
 		}
-		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col+k-1))
+		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col-k-1))
 		s.Ambient = append(s.Ambient, fmt.Sprintf("e%v-%v", row, col+l+1))
+		for i := col - k; i <= col+l; i++ {
+			f[row+1][i+1] = false
+		}
 	}
 	return s
 }
@@ -153,14 +149,13 @@ func (f *Field) GetOrientation(y, x int) (bool, int, int) {
 		}
 		for j = 1; f[row][col+j] == true; j++ {
 		}
-		return false, -i + 1, j - 1
-	} else {
-		for i = 1; f[row-i][col] == true; i++ {
-		}
-		for j = 1; f[row+j][col] == true; j++ {
-		}
-		return true, -i + 1, j - 1
+		return false, i - 1, j - 1
 	}
+	for i = 1; f[row-i][col] == true; i++ {
+	}
+	for j = 1; f[row+j][col] == true; j++ {
+	}
+	return true, i - 1, j - 1
 }
 
 // isHitted returns true if player hit the ship, false if doesn't
