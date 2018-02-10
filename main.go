@@ -148,14 +148,18 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	defer ws.Close()
 
 	for {
-		<-turn[session.Values["username"].(string)]
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		log.Printf("User: %v hit %v cell\n", session.Values["username"].(string), string(msg))
+		select {
+		case <-turn[session.Values["username"].(string)]:
+			log.Printf("User: %v hit %v cell\n", session.Values["username"].(string), string(msg))
+		default:
+			continue
+		}
 
 		enemy := FindEnemy(curGames, session.Values["username"].(string))
 		if enemy == "" {
