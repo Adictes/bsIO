@@ -24,7 +24,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg border">
-                <p class="lead"> {{.}} </p>
+                <p class="lead"> {{.}}</p>
                 <table class="table table-bordered">
                     <tr>
                         <td id="0-0" class="hf" onclick="send('0-0')"></td>
@@ -178,7 +178,7 @@
                 <p>Тут чат</p>
             </div>
             <div class="col-lg border">
-                <p class="lead"> Ник соперника </p>
+                <p id="ename" class="lead"> Противник</p>
                 <table class="table table-bordered">
                     <tr>
                         <td id="e0-0" onclick="hit('e0-0')"></td>
@@ -390,17 +390,21 @@
         stg.onmessage = function (event) {
             var data = JSON.parse(event.data);
 
-            if (data == true) {
-                document.getElementById("stg").classList.remove("btn-success");
-                document.getElementById("stg").classList.add("btn-secondary");
-                document.getElementById("stg").disabled = true;
+            if (typeof data === 'boolean') {
+                if (data == true) {
+                    document.getElementById("stg").classList.remove("btn-success");
+                    document.getElementById("stg").classList.add("btn-secondary");
+                    document.getElementById("stg").disabled = true;
 
-                var cells = document.getElementsByClassName("hf");
-                for (i in cells) {
-                    cells[i].removeAttribute("onclick");
+                    var cells = document.getElementsByClassName("hf");
+                    for (i in cells) {
+                        cells[i].removeAttribute("onclick");
+                    }
+                } else {
+                    alert("Корабли расставлены не верно");
                 }
-            } else {
-                alert("Корабли расставлены не верно");
+            } else if (typeof data === 'string') {
+                document.getElementById("ename").innerText = data;
             }
         }
 

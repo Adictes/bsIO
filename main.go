@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/sessions"
@@ -232,5 +233,16 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				turn[un] <- true
 			}
 		}
+		go func() {
+			var enemy string
+			for {
+				enemy = FindEnemy(curGames, session.Values["username"].(string))
+				if enemy != "" {
+					ws.WriteJSON(enemy)
+					return
+				}
+				time.Sleep(1 * time.Second)
+			}
+		}()
 	}
 }
