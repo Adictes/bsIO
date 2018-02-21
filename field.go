@@ -106,8 +106,15 @@ func (f *Field) isDestroyed(y, x byte, gameField *Field) bool {
 	return true
 }
 
-//GetStrickenShips
-func (f *Field) GetStrickenShips(msg []byte) StrickenShips {
+// GetStrickenShips returns StrickenShips
+func (f *Field) GetStrickenShips(msg []byte, un string) StrickenShips {
+	if !f.isHitted(msg[1], msg[3]) {
+		return StrickenShips{Ambient: []string{string(msg)}}
+	}
+	if !f.isDestroyed(msg[1], msg[3], shots[un]) {
+		return StrickenShips{Hitted: string(msg)}
+	}
+
 	row, _ := strconv.Atoi(string(msg[1]))
 	col, _ := strconv.Atoi(string(msg[3]))
 

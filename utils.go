@@ -1,7 +1,11 @@
 package main
 
-// FindEnemy finds enemy for player
-func FindEnemy(m map[string]string, s string) string {
+import (
+	"strings"
+)
+
+// GetEnemy finds enemy for player
+func GetEnemy(m map[string]string, s string) string {
 	for k, v := range m {
 		if k == s {
 			return v
@@ -24,4 +28,14 @@ func HaveAvailableGame(m map[string]string, s string) string {
 		}
 	}
 	return ""
+}
+
+// ChangeLetter changes letter - 'e' to 'h' in all struct's fields
+func ChangeLetter(s *StrickenShips) {
+	for i, v := range s.Ambient {
+		s.Ambient[i] = strings.Replace(v, "e", "h", 1)
+	}
+	if s.Hitted != "" {
+		s.Hitted = strings.Replace(s.Hitted, "e", "h", 1)
+	}
 }
