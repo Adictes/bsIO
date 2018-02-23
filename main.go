@@ -150,27 +150,22 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 	defer ws.Close()
 
-	go func() {
-		for {
+	for {
+		if <-turn[session.Values["username"].(string)] == false {
 			if s, ok := toSync[session.Values["username"].(string)]; ok && (s.Ambient != nil || s.Hitted != "") {
 				ws.WriteJSON(s)
 			}
-			time.Sleep(1 * time.Second)
+			continue
 		}
-	}()
 
-	for {
+		if s, ok := toSync[session.Values["username"].(string)]; ok && (s.Ambient != nil || s.Hitted != "") {
+			ws.WriteJSON(s)
+		}
+
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
-		}
-
-		select {
-		case <-turn[session.Values["username"].(string)]:
-			log.Printf("User: %v hit %v cell\n", session.Values["username"].(string), string(msg))
-		default:
-			continue
 		}
 
 		enemy := GetEnemy(curGames, session.Values["username"].(string))
@@ -191,8 +186,10 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		if s.Hitted != "" {
 			ws.WriteJSON(fields[enemy].GetAvailableShips())
 			turn[session.Values["username"].(string)] <- true
+			turn[enemy] <- false
 		} else {
 			turn[enemy] <- true
+			turn[session.Values["username"].(string)] <- false
 		}
 
 		fields[enemy].print() // <-- for debug
@@ -240,6 +237,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		case un := <-readyToPlay:
 			if enemy := HaveAvailableGame(curGames, un); enemy != "" {
 				curGames[enemy] = un
+				turn[un] <- false
 			} else {
 				curGames[un] = ""
 				turn[un] <- true
