@@ -17,8 +17,8 @@ var (
 	store       *sessions.CookieStore
 	curGames    map[string]string // Map: username to username, that now playing
 	fields      map[string]*Field // Game's fields assigned to users by their names
-	shots       map[string]*Field
-	readyToPlay chan string // User that ready to play
+	shots       map[string]*Field // Players shots
+	readyToPlay chan string       // User that ready to play
 	turn        map[string]chan bool
 	toSync      map[string]StrickenShips // map to synchronize StrickenShips
 )
@@ -136,7 +136,8 @@ type StrickenShips struct {
 	Hitted  string
 }
 
-// HitEnemyShips checks hit on enemy's field and send this data to websocket
+// HitEnemyShips checks hitting on enemy's field, translates changes to both fields
+// alters stricken ships each turn and checks whose turn is now
 func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session, err := store.Get(r, "session")
 	if err != nil {
@@ -160,6 +161,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 		if s, ok := toSync[session.Values["username"].(string)]; ok && (s.Ambient != nil || s.Hitted != "") {
 			ws.WriteJSON(s)
+			ws.WriteJSON(true)
 		}
 
 		_, msg, err := ws.ReadMessage()
@@ -187,13 +189,20 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			ws.WriteJSON(fields[enemy].GetAvailableShips())
 			turn[session.Values["username"].(string)] <- true
 			turn[enemy] <- false
+			ws.WriteJSON(true)
 		} else {
 			turn[enemy] <- true
 			turn[session.Values["username"].(string)] <- false
+			ws.WriteJSON(false)
 		}
 
 		fields[enemy].print() // <-- for debug
 	}
+}
+
+// BoolWrapper is wrapper for bool to send it to JSON
+type BoolWrapper struct {
+	Turn bool
 }
 
 // StartTheGame initializes starting the game.
@@ -238,9 +247,11 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			if enemy := HaveAvailableGame(curGames, un); enemy != "" {
 				curGames[enemy] = un
 				turn[un] <- false
+				ws.WriteJSON(BoolWrapper{false})
 			} else {
 				curGames[un] = ""
 				turn[un] <- true
+				ws.WriteJSON(BoolWrapper{true})
 			}
 		}
 		go func() {

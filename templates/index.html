@@ -24,7 +24,14 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg border">
-                <p class="lead"> {{.}}</p>
+                <div>
+                    <ul class="list-inline">
+                        <li class="list-inline-item">{{.}}</li>
+                        <li class="list-inline-item">
+                            <span id="turn" class="badge badge-warning">Ходит</span>
+                        </li>
+                    </ul>
+                </div>
                 <table class="table table-bordered">
                     <tr>
                         <td id="h0-0" class="hf" onclick="send('h0-0')"></td>
@@ -178,7 +185,14 @@
                 <p>Тут чат</p>
             </div>
             <div class="col-lg border">
-                <p id="ename" class="lead"> Противник</p>
+                <div>
+                    <ul class="list-inline">
+                        <li id="ename" class="list-inline-item">Противник</li>
+                        <li class="list-inline-item">
+                            <span id="eturn" class="badge badge-warning">Ходит</span>
+                        </li>
+                    </ul>
+                </div>
                 <table class="table table-bordered">
                     <tr>
                         <td id="e0-0" onclick="hit('e0-0')"></td>
@@ -358,25 +372,43 @@
         hes.onmessage = function (event) {
             var data = JSON.parse(event.data);
 
-            if (data.Hitted == undefined) {
-                document.getElementById("esingle-decker").innerText = data.SingleDecker
-                document.getElementById("etwo-decker").innerText = data.TwoDecker
-                document.getElementById("ethree-decker").innerText = data.ThreeDecker
-                document.getElementById("efour-decker").innerText = data.FourDecker
-            } else {
-                if (data.Hitted != "") {
-                    document.getElementById(data.Hitted).style.backgroundColor = "#990000";
-                    document.getElementById(data.Hitted).removeAttribute("onclick");
+            if (typeof data === 'boolean') {
+                if (data == true) {
+                    document.getElementById("turn").innerText = "Ходит";
+                    document.getElementById("eturn").innerText = "Ждет";
+                    document.getElementById("turn").classList.remove("badge-warning");
+                    document.getElementById("turn").classList.add("badge-success");
+                    document.getElementById("eturn").classList.remove("badge-success");
+                    document.getElementById("eturn").classList.add("badge-warning");
+                } else {
+                    document.getElementById("turn").innerText = "Ждет";
+                    document.getElementById("eturn").innerText = "Ходит";
+                    document.getElementById("turn").classList.remove("badge-success");
+                    document.getElementById("turn").classList.add("badge-warning");
+                    document.getElementById("eturn").classList.remove("badge-warning");
+                    document.getElementById("eturn").classList.add("badge-success");
                 }
-
-                for (i in data.Ambient) {
-                    if (data.Ambient[i][1] == '-' || data.Ambient[i][3] == '-' ||
-                        (data.Ambient[i][1] == '1' && data.Ambient[i][2] == '0') ||
-                        (data.Ambient[i][3] == '1' && data.Ambient[i][4] == '0')) {
-                        continue;
+            } else {
+                if (data.Hitted == undefined) {
+                    document.getElementById("esingle-decker").innerText = data.SingleDecker
+                    document.getElementById("etwo-decker").innerText = data.TwoDecker
+                    document.getElementById("ethree-decker").innerText = data.ThreeDecker
+                    document.getElementById("efour-decker").innerText = data.FourDecker
+                } else {
+                    if (data.Hitted != "") {
+                        document.getElementById(data.Hitted).style.backgroundColor = "#990000";
+                        document.getElementById(data.Hitted).removeAttribute("onclick");
                     }
-                    document.getElementById(data.Ambient[i]).style.backgroundColor = "#e6ffff";
-                    document.getElementById(data.Ambient[i]).removeAttribute("onclick");
+
+                    for (i in data.Ambient) {
+                        if (data.Ambient[i][1] == '-' || data.Ambient[i][3] == '-' ||
+                            (data.Ambient[i][1] == '1' && data.Ambient[i][2] == '0') ||
+                            (data.Ambient[i][3] == '1' && data.Ambient[i][4] == '0')) {
+                            continue;
+                        }
+                        document.getElementById(data.Ambient[i]).style.backgroundColor = "#e6ffff";
+                        document.getElementById(data.Ambient[i]).removeAttribute("onclick");
+                    }
                 }
             }
         }
@@ -405,6 +437,16 @@
                 }
             } else if (typeof data === 'string') {
                 document.getElementById("ename").innerText = data;
+            } else if (typeof data === 'object') {
+                if (data.Turn == true) {
+                    document.getElementById("eturn").innerText = "Ждет";
+                    document.getElementById("turn").classList.remove("badge-warning");
+                    document.getElementById("turn").classList.add("badge-success");
+                } else {
+                    document.getElementById("turn").innerText = "Ждет";
+                    document.getElementById("eturn").classList.remove("badge-warning");
+                    document.getElementById("eturn").classList.add("badge-success");
+                }
             }
         }
 
