@@ -130,12 +130,6 @@ func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 }
 
-// StrickenShips is used as JSON wrapper for sending it to websocket
-type StrickenShips struct {
-	Ambient []string
-	Hitted  string
-}
-
 // HitEnemyShips checks hitting on enemy's field, translates changes to both fields
 // alters stricken ships each turn and checks whose turn is now
 func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -153,16 +147,15 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 	for {
 		if <-turn[session.Values["username"].(string)] == false {
-			if s, ok := toSync[session.Values["username"].(string)]; ok && (s.Ambient != nil || s.Hitted != "") {
-				ws.WriteJSON(s)
+			ws.WriteJSON(toSync[session.Values["username"].(string)])
+			if as := fields[session.Values["username"].(string)].GetAvailableShips(); (as == Ships{4, 3, 2, 1}) {
+				ws.WriteJSON(WinWrapper{false})
 			}
 			continue
 		}
 
-		if s, ok := toSync[session.Values["username"].(string)]; ok && (s.Ambient != nil || s.Hitted != "") {
-			ws.WriteJSON(s)
-			ws.WriteJSON(true)
-		}
+		ws.WriteJSON(toSync[session.Values["username"].(string)])
+		ws.WriteJSON(TurnWrapper{true})
 
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
@@ -176,7 +169,6 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[session.Values["username"].(string)] <- true
 			continue
 		}
-		log.Printf("Вот такой противник - %v был найден игроку - %v\n", enemy, session.Values["username"].(string))
 
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		s := fields[enemy].GetStrickenShips(msg, session.Values["username"].(string))
@@ -186,23 +178,22 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		toSync[enemy] = s
 
 		if s.Hitted != "" {
-			ws.WriteJSON(fields[enemy].GetAvailableShips())
+			as := fields[enemy].GetAvailableShips()
+			ws.WriteJSON(as)
 			turn[session.Values["username"].(string)] <- true
 			turn[enemy] <- false
-			ws.WriteJSON(true)
+			ws.WriteJSON(TurnWrapper{true})
+			if (as == Ships{4, 3, 2, 1}) {
+				ws.WriteJSON(WinWrapper{true})
+			}
 		} else {
 			turn[enemy] <- true
 			turn[session.Values["username"].(string)] <- false
-			ws.WriteJSON(false)
+			ws.WriteJSON(TurnWrapper{false})
 		}
 
-		fields[enemy].print() // <-- for debug
+		//fields[enemy].print() // <-- for debug
 	}
-}
-
-// BoolWrapper is wrapper for bool to send it to JSON
-type BoolWrapper struct {
-	Turn bool
 }
 
 // StartTheGame initializes starting the game.
@@ -234,9 +225,9 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 		if fields[session.Values["username"].(string)].CheckPositionOfShips() == true {
 			readyToPlay <- session.Values["username"].(string)
-			ws.WriteJSON(true)
+			ws.WriteJSON(CorrectnessWrapper{true})
 		} else {
-			ws.WriteJSON(false)
+			ws.WriteJSON(CorrectnessWrapper{false})
 			continue
 		}
 
@@ -247,11 +238,11 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			if enemy := HaveAvailableGame(curGames, un); enemy != "" {
 				curGames[enemy] = un
 				turn[un] <- false
-				ws.WriteJSON(BoolWrapper{false})
+				ws.WriteJSON(TurnWrapper{false})
 			} else {
 				curGames[un] = ""
 				turn[un] <- true
-				ws.WriteJSON(BoolWrapper{true})
+				ws.WriteJSON(TurnWrapper{true})
 			}
 		}
 		go func() {
@@ -259,7 +250,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			for {
 				enemy = GetEnemy(curGames, session.Values["username"].(string))
 				if enemy != "" {
-					ws.WriteJSON(enemy)
+					ws.WriteJSON(NameWrapper{enemy})
 					return
 				}
 				time.Sleep(1 * time.Second)

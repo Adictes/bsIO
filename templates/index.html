@@ -28,7 +28,7 @@
                     <ul class="list-inline">
                         <li class="list-inline-item">{{.}}</li>
                         <li class="list-inline-item">
-                            <span id="turn" class="badge badge-warning">Ходит</span>
+                            <span id="turn" class="badge badge-warning">Ждет</span>
                         </li>
                     </ul>
                 </div>
@@ -189,7 +189,7 @@
                     <ul class="list-inline">
                         <li id="ename" class="list-inline-item">Противник</li>
                         <li class="list-inline-item">
-                            <span id="eturn" class="badge badge-warning">Ходит</span>
+                            <span id="eturn" class="badge badge-warning">Ждет</span>
                         </li>
                     </ul>
                 </div>
@@ -372,8 +372,8 @@
         hes.onmessage = function (event) {
             var data = JSON.parse(event.data);
 
-            if (typeof data === 'boolean') {
-                if (data == true) {
+            if (data.Turn != undefined) {
+                if (data.Turn == true) {
                     document.getElementById("turn").innerText = "Ходит";
                     document.getElementById("eturn").innerText = "Ждет";
                     document.getElementById("turn").classList.remove("badge-warning");
@@ -388,27 +388,31 @@
                     document.getElementById("eturn").classList.remove("badge-warning");
                     document.getElementById("eturn").classList.add("badge-success");
                 }
-            } else {
-                if (data.Hitted == undefined) {
-                    document.getElementById("esingle-decker").innerText = data.SingleDecker
-                    document.getElementById("etwo-decker").innerText = data.TwoDecker
-                    document.getElementById("ethree-decker").innerText = data.ThreeDecker
-                    document.getElementById("efour-decker").innerText = data.FourDecker
-                } else {
-                    if (data.Hitted != "") {
-                        document.getElementById(data.Hitted).style.backgroundColor = "#990000";
-                        document.getElementById(data.Hitted).removeAttribute("onclick");
-                    }
+            } else if (data.Hitted != undefined) {
+                if (data.Hitted != "") {
+                    document.getElementById(data.Hitted).style.backgroundColor = "#990000";
+                    document.getElementById(data.Hitted).removeAttribute("onclick");
+                }
 
-                    for (i in data.Ambient) {
-                        if (data.Ambient[i][1] == '-' || data.Ambient[i][3] == '-' ||
-                            (data.Ambient[i][1] == '1' && data.Ambient[i][2] == '0') ||
-                            (data.Ambient[i][3] == '1' && data.Ambient[i][4] == '0')) {
-                            continue;
-                        }
-                        document.getElementById(data.Ambient[i]).style.backgroundColor = "#e6ffff";
-                        document.getElementById(data.Ambient[i]).removeAttribute("onclick");
+                for (i in data.Ambient) {
+                    if (data.Ambient[i][1] == '-' || data.Ambient[i][3] == '-' ||
+                        (data.Ambient[i][1] == '1' && data.Ambient[i][2] == '0') ||
+                        (data.Ambient[i][3] == '1' && data.Ambient[i][4] == '0')) {
+                        continue;
                     }
+                    document.getElementById(data.Ambient[i]).style.backgroundColor = "#e6ffff";
+                    document.getElementById(data.Ambient[i]).removeAttribute("onclick");
+                }
+            } else if (data.SingleDecker != undefined) {
+                document.getElementById("esingle-decker").innerText = data.SingleDecker
+                document.getElementById("etwo-decker").innerText = data.TwoDecker
+                document.getElementById("ethree-decker").innerText = data.ThreeDecker
+                document.getElementById("efour-decker").innerText = data.FourDecker
+            } else if (data.Win != undefined) {
+                if (data.Win == true) {
+                    alert('Ты победил!');
+                } else {
+                    alert('Ты проиграл.');
                 }
             }
         }
@@ -422,8 +426,8 @@
         stg.onmessage = function (event) {
             var data = JSON.parse(event.data);
 
-            if (typeof data === 'boolean') {
-                if (data == true) {
+            if (data.Correctness != undefined) {
+                if (data.Correctness == true) {
                     document.getElementById("stg").classList.remove("btn-success");
                     document.getElementById("stg").classList.add("btn-secondary");
                     document.getElementById("stg").disabled = true;
@@ -435,9 +439,9 @@
                 } else {
                     alert("Корабли расставлены не верно");
                 }
-            } else if (typeof data === 'string') {
-                document.getElementById("ename").innerText = data;
-            } else if (typeof data === 'object') {
+            } else if (data.Name != undefined) {
+                document.getElementById("ename").innerText = data.Name;
+            } else if (data.Turn != undefined) {
                 if (data.Turn == true) {
                     document.getElementById("eturn").innerText = "Ждет";
                     document.getElementById("turn").classList.remove("badge-warning");
