@@ -258,3 +258,32 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		}()
 	}
 }
+
+// RandomFieldFilling sets ships on the field randomly
+func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	_, err := store.Get(r, "session") // Было session, err := (иначе не скомпилится)
+	if err != nil {
+		log.Fatal("Session: ", err)
+	}
+
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer ws.Close()
+
+	for {
+		_, _, err := ws.ReadMessage() // На самом деле я не присваиваю пришедшее значение, так как в этом нет смысла
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		// Просто код ниже исполниться только тогда, когда
+		// кнопку кто-то нажал, значит нужно сделать дело
+
+		// Если что-то пришло, значит рандомно расставляем кораблики
+		// даже если корабли уже расставлены, эта функция НИЖЕ будет работать
+		// и переставлять кораблики
+	}
+}
