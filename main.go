@@ -44,6 +44,8 @@ func main() {
 	router.GET("/shs", SetHomeShips)
 	router.GET("/hes", HitEnemyShips)
 	router.GET("/stg", StartTheGame)
+	router.GET("/rff", RandomFieldFilling)
+	router.GET("/clr", CleanAll)
 
 	err := http.ListenAndServe(":8080", context.ClearHandler(router))
 	if err != nil {
@@ -285,5 +287,29 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		// Если что-то пришло, значит рандомно расставляем кораблики
 		// даже если корабли уже расставлены, эта функция НИЖЕ будет работать
 		// и переставлять кораблики
+	}
+}
+
+// CleanAll cleans used vars and restore all to default
+func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	_, err := store.Get(r, "session") // Было session, err := (иначе не скомпилится)
+	if err != nil {
+		log.Fatal("Session: ", err)
+	}
+
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer ws.Close()
+
+	for {
+		_, _, err := ws.ReadMessage()
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		// Тут пошла очистка
 	}
 }

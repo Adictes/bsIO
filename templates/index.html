@@ -376,6 +376,12 @@
 
         var hes = new WebSocket("ws://localhost:8080/hes");
 
+        function hit(cell) {
+            hes.send(cell);
+        }
+
+        var clr = new WebSocket("ws://localhost:8080/clr");
+
         hes.onmessage = function (event) {
             var data = JSON.parse(event.data);
 
@@ -421,11 +427,13 @@
                 } else {
                     alert('Ты проиграл.');
                 }
+                clr.send("Do cleaning");
+                cleanAll();
             }
         }
 
-        function hit(cell) {
-            hes.send(cell);
+        function cleanAll() {
+
         }
 
         var stg = new WebSocket("ws://localhost:8080/stg");
