@@ -16,6 +16,7 @@ var (
 	t           *template.Template
 	store       *sessions.CookieStore
 	curGames    map[string]string // Map: username to username, that now playing
+	clean       map[string]bool
 	fields      map[string]*Field // Game's fields assigned to users by their names
 	shots       map[string]*Field // Players shots
 	readyToPlay chan string       // User that ready to play
@@ -27,6 +28,7 @@ func init() {
 	t = template.Must(template.New("Game").ParseFiles("templates/index.html", "templates/login.html"))
 	store = sessions.NewCookieStore([]byte("very-secret-key"))
 	curGames = make(map[string]string)
+	clean = make(map[string]bool)
 	fields = make(map[string]*Field)
 	shots = make(map[string]*Field)
 	readyToPlay = make(chan string, 1)
@@ -186,6 +188,8 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[enemy] <- false
 			ws.WriteJSON(TurnWrapper{true})
 			if (as == Ships{4, 3, 2, 1}) {
+				clean[session.Values["username"].(string)] = true
+				clean[enemy] = true
 				ws.WriteJSON(WinWrapper{true})
 			}
 		} else {
@@ -202,7 +206,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 // First of all, it checks whether player can to play or not.
 // He can't if he don't push the button 'I'm ready'.
 // After that, it checks right positions of ships.
-// If it's alright it adds player to readyToPlay chan.
+// If it's alright it adds player to chan "readyToPlay".
 // Then if it found player that also want to play,
 // it adds him and they can to play.
 func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -311,5 +315,13 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 		// Тут пошла очистка
+		for k := range clean {
+			curGames[k] = ""
+			fields[k] = &Field{}
+			shots[k] = &Field{}
+			turn[k] = make(chan bool, 1)
+			toSync[k] = StrickenShips{}
+			delete(clean, k)
+		}
 	}
 }

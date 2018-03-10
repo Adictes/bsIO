@@ -17,7 +17,7 @@ func GetEnemy(m map[string]string, s string) string {
 	return ""
 }
 
-// HaveAvailableGame checks has 'm' 's'. If not return ""
+// HaveAvailableGame checks if 'm' has a player without opponent (except of player 's'). If not return ""
 func HaveAvailableGame(m map[string]string, s string) string {
 	for k, v := range m {
 		if k == s {
