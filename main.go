@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
@@ -151,10 +150,8 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	defer ws.Close()
 
 	for {
-		fmt.Println("1", session.Values["username"].(string))
 		if <-turn[session.Values["username"].(string)] == false {
 			ws.WriteJSON(toSync[session.Values["username"].(string)])
-			fmt.Println("2", session.Values["username"].(string))
 			if as := fields[session.Values["username"].(string)].GetAvailableShips(); (as == Ships{4, 3, 2, 1}) {
 				ws.WriteJSON(WinWrapper{false})
 			}
@@ -164,13 +161,11 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		ws.WriteJSON(toSync[session.Values["username"].(string)])
 		ws.WriteJSON(TurnWrapper{true})
 
-		fmt.Println("3", session.Values["username"].(string))
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		fmt.Println("4", session.Values["username"].(string))
 
 		enemy := GetEnemy(curGames, session.Values["username"].(string))
 		if enemy == "" {
@@ -178,8 +173,6 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[session.Values["username"].(string)] <- true
 			continue
 		}
-		fmt.Println("5", session.Values["username"].(string))
-
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		s := fields[enemy].GetStrickenShips(msg, session.Values["username"].(string))
 		ws.WriteJSON(s)
@@ -188,18 +181,16 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		toSync[enemy] = s
 
 		if s.Hitted != "" {
-			fmt.Println("6", session.Values["username"].(string))
 			as := fields[enemy].GetAvailableShips()
 			ws.WriteJSON(as)
-			turn[session.Values["username"].(string)] <- true
 			turn[enemy] <- false
-			ws.WriteJSON(TurnWrapper{true})
 			if (as == Ships{4, 3, 2, 1}) {
 				ws.WriteJSON(WinWrapper{true})
-				fmt.Println("!!!!!!!!!!!")
+				continue
 			}
+			turn[session.Values["username"].(string)] <- true
+			ws.WriteJSON(TurnWrapper{true})
 		} else {
-			fmt.Println("7", session.Values["username"].(string))
 			turn[enemy] <- true
 			turn[session.Values["username"].(string)] <- false
 			ws.WriteJSON(TurnWrapper{false})
@@ -252,6 +243,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				curGames[enemy] = un
 				turn[un] <- false
 				ws.WriteJSON(TurnWrapper{false})
+				log.Printf("User: %v is starting to play with %v\n", un, enemy)
 			} else {
 				curGames[un] = ""
 				turn[un] <- true
@@ -364,11 +356,9 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			log.Println(err)
 			return
 		}
-		// Тут пошла очистка
-		curGames[session.Values["username"].(string)] = ""
+		delete(curGames, session.Values["username"].(string))
 		fields[session.Values["username"].(string)] = &Field{}
 		shots[session.Values["username"].(string)] = &Field{}
-		turn[session.Values["username"].(string)] = make(chan bool, 1)
 		toSync[session.Values["username"].(string)] = StrickenShips{}
 	}
 }
