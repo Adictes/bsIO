@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
@@ -150,8 +151,10 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	defer ws.Close()
 
 	for {
+		fmt.Println("1", session.Values["username"].(string))
 		if <-turn[session.Values["username"].(string)] == false {
 			ws.WriteJSON(toSync[session.Values["username"].(string)])
+			fmt.Println("2", session.Values["username"].(string))
 			if as := fields[session.Values["username"].(string)].GetAvailableShips(); (as == Ships{4, 3, 2, 1}) {
 				ws.WriteJSON(WinWrapper{false})
 			}
@@ -161,11 +164,13 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		ws.WriteJSON(toSync[session.Values["username"].(string)])
 		ws.WriteJSON(TurnWrapper{true})
 
+		fmt.Println("3", session.Values["username"].(string))
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
+		fmt.Println("4", session.Values["username"].(string))
 
 		enemy := GetEnemy(curGames, session.Values["username"].(string))
 		if enemy == "" {
@@ -173,6 +178,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[session.Values["username"].(string)] <- true
 			continue
 		}
+		fmt.Println("5", session.Values["username"].(string))
 
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		s := fields[enemy].GetStrickenShips(msg, session.Values["username"].(string))
@@ -182,6 +188,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		toSync[enemy] = s
 
 		if s.Hitted != "" {
+			fmt.Println("6", session.Values["username"].(string))
 			as := fields[enemy].GetAvailableShips()
 			ws.WriteJSON(as)
 			turn[session.Values["username"].(string)] <- true
@@ -189,8 +196,10 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			ws.WriteJSON(TurnWrapper{true})
 			if (as == Ships{4, 3, 2, 1}) {
 				ws.WriteJSON(WinWrapper{true})
+				fmt.Println("!!!!!!!!!!!")
 			}
 		} else {
+			fmt.Println("7", session.Values["username"].(string))
 			turn[enemy] <- true
 			turn[session.Values["username"].(string)] <- false
 			ws.WriteJSON(TurnWrapper{false})
@@ -265,6 +274,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // RandomFieldFilling sets ships on the field randomly
 func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	rand.Seed(time.Now().UnixNano())
 	session, err := store.Get(r, "session")
 	if err != nil {
 		log.Fatal("Session: ", err)
