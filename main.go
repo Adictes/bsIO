@@ -333,7 +333,7 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 			}
 		}
 		fields[session.Values["username"].(string)].print()
-		//ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
+		ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
 	}
 }
 

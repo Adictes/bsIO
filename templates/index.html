@@ -515,6 +515,11 @@
                 }
             } else if (data.Cell != undefined) {
                 changeCellColor(data.Cell);
+            } else if (data.SingleDecker != undefined) {
+                document.getElementById("single-decker").innerText = data.SingleDecker;
+                document.getElementById("two-decker").innerText = data.TwoDecker;
+                document.getElementById("three-decker").innerText = data.ThreeDecker;
+                document.getElementById("four-decker").innerText = data.FourDecker
             }
         }
 
