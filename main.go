@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/context"
@@ -278,19 +278,15 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	defer ws.Close()
 
 	for {
-		_, msg, err := ws.ReadMessage() // На самом деле я не присваиваю пришедшее значение, так как в этом нет смысла
-		fmt.Println(msg)
+		_, _, err := ws.ReadMessage()
 		if err != nil {
 			log.Println(err)
 			return
 		}
-		// Просто код ниже исполниться только тогда, когда
-		// кнопку кто-то нажал, значит нужно сделать дело
 
-		// Если что-то пришло, значит рандомно расставляем кораблики
-		// даже если корабли уже расставлены, эта функция НИЖЕ будет работать
-		// и переставлять кораблики
-		var tempField [12][12]bool
+		ws.WriteJSON(ClearWrapper{true})
+
+		var tempField Field
 		fields[session.Values["username"].(string)] = &Field{}
 		for len := 4; len >= 1; len-- { //цикл по длине кораблей
 			for k := len; k <= 4; k++ { //цикл по кол-ву кораблей
@@ -328,16 +324,13 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		for i := 1; i <= 10; i++ {
 			for j := 1; j <= 10; j++ {
 				if tempField[i][j] == true {
-					fmt.Print("1 ")
 					fields[session.Values["username"].(string)].IndicateCell(byte('0'+i-1), byte('0'+j-1))
-				} else {
-					fmt.Print("0 ")
+					ws.WriteJSON(CellWrapper{"h" + strconv.Itoa(i-1) + "-" + strconv.Itoa(j-1)})
 				}
 			}
-			fmt.Println()
 		}
 		fields[session.Values["username"].(string)].print()
-		ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
+		//ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
 	}
 }
 

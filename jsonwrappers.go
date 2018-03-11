@@ -28,3 +28,13 @@ type CorrectnessWrapper struct {
 type NameWrapper struct {
 	Name string
 }
+
+// CellWrapper
+type CellWrapper struct {
+	Cell string
+}
+
+// ClearWrapper
+type ClearWrapper struct {
+	Clear bool
+}

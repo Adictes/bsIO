@@ -505,6 +505,19 @@
 
         var rff = new WebSocket("ws://localhost:8080/rff");
 
+        rff.onmessage = function (event) {
+            var data = JSON.parse(event.data);
+
+            if (data.Clear != undefined) {
+                var cells = document.getElementsByClassName("hf");
+                for (i = 0; i < cells.length; i++) {
+                    cells[i].style.backgroundColor = "";
+                }
+            } else if (data.Cell != undefined) {
+                changeCellColor(data.Cell);
+            }
+        }
+
         function randomFilling() {
             rff.send("Start the random filling");
         }
