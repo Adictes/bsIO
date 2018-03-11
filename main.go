@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -16,7 +18,6 @@ var (
 	t           *template.Template
 	store       *sessions.CookieStore
 	curGames    map[string]string // Map: username to username, that now playing
-	clean       map[string]bool
 	fields      map[string]*Field // Game's fields assigned to users by their names
 	shots       map[string]*Field // Players shots
 	readyToPlay chan string       // User that ready to play
@@ -28,7 +29,6 @@ func init() {
 	t = template.Must(template.New("Game").ParseFiles("templates/index.html", "templates/login.html"))
 	store = sessions.NewCookieStore([]byte("very-secret-key"))
 	curGames = make(map[string]string)
-	clean = make(map[string]bool)
 	fields = make(map[string]*Field)
 	shots = make(map[string]*Field)
 	readyToPlay = make(chan string, 1)
@@ -188,8 +188,6 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[enemy] <- false
 			ws.WriteJSON(TurnWrapper{true})
 			if (as == Ships{4, 3, 2, 1}) {
-				clean[session.Values["username"].(string)] = true
-				clean[enemy] = true
 				ws.WriteJSON(WinWrapper{true})
 			}
 		} else {
@@ -267,7 +265,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 // RandomFieldFilling sets ships on the field randomly
 func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	_, err := store.Get(r, "session") // Было session, err := (иначе не скомпилится)
+	session, err := store.Get(r, "session")
 	if err != nil {
 		log.Fatal("Session: ", err)
 	}
@@ -280,7 +278,8 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	defer ws.Close()
 
 	for {
-		_, _, err := ws.ReadMessage() // На самом деле я не присваиваю пришедшее значение, так как в этом нет смысла
+		_, msg, err := ws.ReadMessage() // На самом деле я не присваиваю пришедшее значение, так как в этом нет смысла
+		fmt.Println(msg)
 		if err != nil {
 			log.Println(err)
 			return
@@ -291,12 +290,60 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		// Если что-то пришло, значит рандомно расставляем кораблики
 		// даже если корабли уже расставлены, эта функция НИЖЕ будет работать
 		// и переставлять кораблики
+		var tempField [12][12]bool
+		fields[session.Values["username"].(string)] = &Field{}
+		for len := 4; len >= 1; len-- { //цикл по длине кораблей
+			for k := len; k <= 4; k++ { //цикл по кол-ву кораблей
+				flag := true
+				var row1, col1, row2, col2 uint8
+				for flag == true {
+					flag = false
+					row1 = uint8(rand.Int()%(10-len+1)) + 1
+					col1 = uint8(rand.Int()%(10-len+1)) + 1
+					if orientation := uint8(rand.Int() % 2); orientation == 1 {
+						col2 = col1 + uint8(len-1)
+						row2 = row1
+					} else {
+						row2 = row1 + uint8(len-1)
+						col2 = col1
+					}
+					//проверяем что наш корабль не пересекается с уже заданными
+					for i := col1 - 1; i <= col2+1; i++ {
+						for j := row1 - 1; j <= row2+1; j++ {
+							if tempField[j][i] == true {
+								flag = true
+							}
+						}
+					}
+				}
+				//если мы тут, значит корабль можно поставить
+				//заносим его в наш массив(поле):
+				for i := col1; i <= col2; i++ {
+					for j := row1; j <= row2; j++ {
+						tempField[j][i] = true
+					}
+				}
+			}
+		}
+		for i := 1; i <= 10; i++ {
+			for j := 1; j <= 10; j++ {
+				if tempField[i][j] == true {
+					fmt.Print("1 ")
+					fields[session.Values["username"].(string)].IndicateCell(byte('0'+i-1), byte('0'+j-1))
+				} else {
+					fmt.Print("0 ")
+				}
+			}
+			fmt.Println()
+		}
+		fields[session.Values["username"].(string)].print()
+		ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
 	}
 }
 
 // CleanAll cleans used vars and restore all to default
 func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	_, err := store.Get(r, "session") // Было session, err := (иначе не скомпилится)
+	session, err := store.Get(r, "session")
 	if err != nil {
 		log.Fatal("Session: ", err)
 	}
@@ -315,13 +362,10 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			return
 		}
 		// Тут пошла очистка
-		for k := range clean {
-			curGames[k] = ""
-			fields[k] = &Field{}
-			shots[k] = &Field{}
-			turn[k] = make(chan bool, 1)
-			toSync[k] = StrickenShips{}
-			delete(clean, k)
-		}
+		curGames[session.Values["username"].(string)] = ""
+		fields[session.Values["username"].(string)] = &Field{}
+		shots[session.Values["username"].(string)] = &Field{}
+		turn[session.Values["username"].(string)] = make(chan bool, 1)
+		toSync[session.Values["username"].(string)] = StrickenShips{}
 	}
 }
