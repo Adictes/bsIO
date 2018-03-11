@@ -152,6 +152,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	for {
 		if <-turn[session.Values["username"].(string)] == false {
 			ws.WriteJSON(toSync[session.Values["username"].(string)])
+			ws.WriteJSON(TurnWrapper{false})
 			if as := fields[session.Values["username"].(string)].GetAvailableShips(); (as == Ships{4, 3, 2, 1}) {
 				ws.WriteJSON(WinWrapper{false})
 			}
