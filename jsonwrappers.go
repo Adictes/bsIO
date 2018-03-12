@@ -29,12 +29,12 @@ type NameWrapper struct {
 	Name string
 }
 
-// CellWrapper
+// CellWrapper sending with cell's id
 type CellWrapper struct {
 	Cell string
 }
 
-// ClearWrapper
+// ClearWrapper is sending when clearing is starting
 type ClearWrapper struct {
 	Clear bool
 }

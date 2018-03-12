@@ -34,6 +34,11 @@ func init() {
 	readyToPlay = make(chan string, 1)
 	turn = make(map[string]chan bool)
 	toSync = make(map[string]StrickenShips)
+
+	store.Options = &sessions.Options{
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+	}
 }
 
 func main() {
@@ -71,6 +76,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	shots[session.Values["username"].(string)] = &Field{}
 	turn[session.Values["username"].(string)] = make(chan bool, 1)
 	toSync[session.Values["username"].(string)] = StrickenShips{}
+
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
 
@@ -101,13 +107,13 @@ func LoginSend(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+// upgrader uses to establish websocket connection
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
 
 // SetHomeShips sets ships on the home field
-// Uses websocket connection
 func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session, err := store.Get(r, "session")
 	if err != nil {
@@ -116,7 +122,7 @@ func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Println("WebSocket upgrading:", err)
 		return
 	}
 	defer ws.Close()
@@ -124,18 +130,18 @@ func SetHomeShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			log.Println(err)
-			return
+			log.Println("WebSocket read message:", err)
+			continue
 		}
 
-		log.Println(string(msg))
 		fields[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
 		ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
 	}
 }
 
-// HitEnemyShips checks hitting on enemy's field, translates changes to both fields
-// alters stricken ships each turn and checks whose turn is now
+// HitEnemyShips checks hitting on enemy's field,
+// translates changes to both fields, alters stricken ships each turn,
+// checks whose turn is now and tracking for win/lose
 func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session, err := store.Get(r, "session")
 	if err != nil {
@@ -144,7 +150,7 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Println("WebSocket upgrading:", err)
 		return
 	}
 	defer ws.Close()
@@ -164,8 +170,8 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
-			log.Println(err)
-			return
+			log.Println("WebSocket read message:", err)
+			continue
 		}
 
 		enemy := GetEnemy(curGames, session.Values["username"].(string))
@@ -174,14 +180,18 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[session.Values["username"].(string)] <- true
 			continue
 		}
+
+		// Записали попадание в shots, после получили структуру
+		// сбитых и прилежащих к сбитым ячеек, отправили ее для рендера
+		// у себя, изменили ее для последующего рендера у 2-ого игрока
+		// и записали эти изменения на его имя
 		shots[session.Values["username"].(string)].IndicateCell(msg[1], msg[3])
-		s := fields[enemy].GetStrickenShips(msg, session.Values["username"].(string))
-		ws.WriteJSON(s)
+		strickenShips := fields[enemy].GetStrickenShips(msg, session.Values["username"].(string))
+		ws.WriteJSON(strickenShips)
+		ChangeLetter(&strickenShips)
+		toSync[enemy] = strickenShips
 
-		ChangeLetter(&s)
-		toSync[enemy] = s
-
-		if s.Hitted != "" {
+		if strickenShips.Hitted != "" {
 			as := fields[enemy].GetAvailableShips()
 			ws.WriteJSON(as)
 			turn[enemy] <- false
@@ -196,15 +206,11 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			turn[session.Values["username"].(string)] <- false
 			ws.WriteJSON(TurnWrapper{false})
 		}
-
-		//fields[enemy].print() // <-- for debug
 	}
 }
 
 // StartTheGame initializes starting the game.
-// First of all, it checks whether player can to play or not.
-// He can't if he don't push the button 'I'm ready'.
-// After that, it checks right positions of ships.
+// First of all, it checks right positions of ships.
 // If it's alright it adds player to chan "readyToPlay".
 // Then if it found player that also want to play,
 // it adds him and they can to play.
@@ -216,7 +222,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Println("WebSocket upgrading:", err)
 		return
 	}
 	defer ws.Close()
@@ -224,8 +230,8 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	for {
 		_, _, err := ws.ReadMessage()
 		if err != nil {
-			log.Println(err)
-			return
+			log.Println("WebSocket read message:", err)
+			continue
 		}
 
 		if fields[session.Values["username"].(string)].CheckPositionOfShips() == true {
@@ -235,8 +241,6 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			ws.WriteJSON(CorrectnessWrapper{false})
 			continue
 		}
-
-		log.Printf("User: %v want to play\n", session.Values["username"].(string))
 
 		select {
 		case un := <-readyToPlay:
@@ -249,6 +253,7 @@ func StartTheGame(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 				curGames[un] = ""
 				turn[un] <- true
 				ws.WriteJSON(TurnWrapper{true})
+				log.Printf("User: %v is waiting to play with someone\n", un)
 			}
 		}
 		go func() {
@@ -275,7 +280,7 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Println("WebSocket upgrading:", err)
 		return
 	}
 	defer ws.Close()
@@ -283,8 +288,8 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	for {
 		_, _, err := ws.ReadMessage()
 		if err != nil {
-			log.Println(err)
-			return
+			log.Println("WebSocket read message:", err)
+			continue
 		}
 
 		ws.WriteJSON(ClearWrapper{true})
@@ -332,7 +337,7 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 				}
 			}
 		}
-		fields[session.Values["username"].(string)].print()
+
 		ws.WriteJSON(fields[session.Values["username"].(string)].GetAvailableShips())
 	}
 }
@@ -341,12 +346,12 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	session, err := store.Get(r, "session")
 	if err != nil {
-		log.Fatal("Session: ", err)
+		log.Println("Session: ", err)
 	}
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Println("WebSocket upgrading:", err)
 		return
 	}
 	defer ws.Close()
@@ -354,9 +359,10 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	for {
 		_, _, err := ws.ReadMessage()
 		if err != nil {
-			log.Println(err)
-			return
+			log.Println("WebSocket read message:", err)
+			continue
 		}
+
 		delete(curGames, session.Values["username"].(string))
 		fields[session.Values["username"].(string)] = &Field{}
 		shots[session.Values["username"].(string)] = &Field{}
