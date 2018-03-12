@@ -468,7 +468,7 @@
             document.getElementById("efour-decker").innerText = 0;
 
             document.getElementById("stg").disabled = false;
-            document.getElementById("stg").classList.add("btn-success");
+            document.getElementById("rff").disabled = false;
         }
 
         var stg = new WebSocket("ws://localhost:8080/stg");
@@ -478,8 +478,8 @@
 
             if (data.Correctness != undefined) {
                 if (data.Correctness == true) {
-                    document.getElementById("stg").classList.remove("btn-success");
                     document.getElementById("stg").disabled = true;
+                    document.getElementById("rff").disabled = true;
 
                     var cells = document.getElementsByClassName("hf");
                     for (i in cells) {
