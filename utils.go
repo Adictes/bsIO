@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"strings"
 )
 
@@ -38,4 +39,13 @@ func ChangeLetter(s *StrickenShips) {
 	if s.Hitted != "" {
 		s.Hitted = strings.Replace(s.Hitted, "e", "h", 1)
 	}
+}
+
+// GetUsername fetchs username from session
+func GetUsername(r *http.Request, sessionName string) (username string, err error) {
+	session, err := store.Get(r, "session")
+	if err != nil {
+		return "", err
+	}
+	return session.Values["username"].(string), nil
 }
