@@ -23,6 +23,7 @@ var (
 	readyToPlay chan string       // User that ready to play
 	turn        map[string]chan bool
 	toSync      map[string]StrickenShips // map to synchronize StrickenShips
+	lastMessage map[string]chan string   // Map: username to message that he got
 )
 
 func init() {
@@ -34,6 +35,7 @@ func init() {
 	readyToPlay = make(chan string, 1)
 	turn = make(map[string]chan bool)
 	toSync = make(map[string]StrickenShips)
+	lastMessage = make(map[string]chan string)
 
 	store.Options = &sessions.Options{
 		MaxAge:   86400 * 7,
@@ -53,6 +55,7 @@ func main() {
 	router.GET("/stg", StartTheGame)
 	router.GET("/rff", RandomFieldFilling)
 	router.GET("/clr", CleanAll)
+	router.GET("/hm", HandleMessage)
 
 	err := http.ListenAndServe(":8080", context.ClearHandler(router))
 	if err != nil {
@@ -78,6 +81,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	shots[session.Values["username"].(string)] = &Field{}
 	turn[session.Values["username"].(string)] = make(chan bool, 1)
 	toSync[session.Values["username"].(string)] = StrickenShips{}
+	lastMessage[session.Values["username"].(string)] = make(chan string, 1)
 
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
@@ -390,5 +394,48 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		fields[username] = &Field{}
 		shots[username] = &Field{}
 		toSync[username] = StrickenShips{}
+	}
+}
+
+// HandleMessage retranslated message to another player
+// and listens from enemy his new messages
+func HandleMessage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	username, err := GetUsername(r, "session")
+	if err != nil {
+		log.Println("Session:", err)
+		http.Error(w, "Problems with your session. Please try again", http.StatusBadRequest)
+		return
+	}
+
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("Upgrading:", err)
+		http.Error(w, "Problems with upgrading to websocket connection. Please try again", http.StatusUpgradeRequired)
+		return
+	}
+	defer ws.Close()
+
+	// Waiting for messages from another user
+	go func() {
+		for {
+			select {
+			case msg := <-lastMessage[username]:
+				ws.WriteJSON(MessageWrapper{msg})
+			}
+		}
+	}()
+
+	for {
+		_, msg, err := ws.ReadMessage()
+		if err != nil {
+			log.Println("Read message:", err)
+			return
+		}
+
+		enemy := GetEnemy(curGames, username)
+		if enemy == "" {
+			continue
+		}
+		lastMessage[enemy] <- string(msg)
 	}
 }

@@ -1,6 +1,5 @@
 footer {
     padding: 10px;
-    text-align: initial;
 }
 td:hover {
     background-color: rgba(0, 0, 0, 0.075);
@@ -10,4 +9,9 @@ td:hover {
     margin-right: auto;
     height: 25rem;
     width: 25rem;
+}
+.vsbl {
+    overflow: scroll;
+    min-height: 25rem;
+    max-height: 25rem;
 }

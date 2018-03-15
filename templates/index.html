@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <header class="navbar navbar-expand-lg flex-row">
+    <nav class="navbar navbar-expand-lg flex-row bg-light">
         <a class="navbar-brand" href="#">bsIO</a>
         <div class="navbar-text">Welcome to the BattleShip.io</div>
         <ul class="navbar-nav flex-row ml-auto d-flex">
@@ -20,7 +20,7 @@
                 <a class="nav-link" aria-label="GitHub" href="https://github.com/Adictes/bsIO">GitHub</a>
             </li>
         </ul>
-    </header>
+    </nav>
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg border">
@@ -188,8 +188,13 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-5 border">
+            <div class="col-lg-5">
                 <p>Тут чат</p>
+                <div class="d-flex align-items-end border-left border-primary vsbl pl-1 mb-3 bg-light" id="output"></div>
+                <label class="mb-0" for="t_input">Ваше сообщение:</label>
+                <textarea class="form-control mb-1" id="t_input" maxlength="300"></textarea>
+                <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                <button class="float-right btn btn-outline-warning" onclick="clearMessage()">Clear</button>
             </div>
             <div class="col-lg border">
                 <div>
@@ -348,7 +353,7 @@
             </div>
         </div>
     </div>
-    <footer> Made by Adictes </footer>
+    <footer class="bg-light"> Made by Adictes </footer>
     <script src="../assets/js/main.js"></script>
 </body>
 

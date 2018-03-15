@@ -117,6 +117,8 @@ function cleanAll() {
 
     document.getElementById("stg").disabled = false;
     document.getElementById("rff").disabled = false;
+
+    document.getElementById("output").innerText = "";
 }
 
 var stg = new WebSocket("ws://localhost:8080/stg");
@@ -177,4 +179,29 @@ function randomFilling() {
 
 function startTheGame() {
     stg.send("The game has begun");
+}
+
+//Chat functionality
+
+var hm = new WebSocket("ws://localhost:8080/hm");
+
+hm.onmessage = function (event) {
+    var data = JSON.parse(event.data);
+
+    document.getElementById("output").innerText += data.Message;
+}
+
+function sendMessage() {
+    var message = document.getElementById("t_input").value + '\n';
+
+    document.getElementById("output").innerText += message;
+    hm.send(message);
+
+    document.getElementById("t_input").value = "";
+    document.getElementById("t_input").focus();
+}
+
+function clearMessage() {
+    document.getElementById("t_input").value = "";
+    document.getElementById("t_input").focus();
 }

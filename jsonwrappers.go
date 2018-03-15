@@ -38,3 +38,8 @@ type CellWrapper struct {
 type ClearWrapper struct {
 	Clear bool
 }
+
+// MessageWrapper sending with message from user
+type MessageWrapper struct {
+	Message string
+}
