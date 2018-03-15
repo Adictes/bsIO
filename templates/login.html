@@ -11,7 +11,7 @@
 </head>
 
 <body>
-    <header class="navbar navbar-expand-lg flex-row">
+    <nav class="navbar navbar-expand-lg flex-row bg-light">
         <a class="navbar-brand" href="#">bsIO</a>
         <div class="navbar-text">Welcome to the BattleShip.io</div>
         <ul class="navbar-nav flex-row ml-auto d-flex">
@@ -19,31 +19,25 @@
                 <a class="nav-link" aria-label="GitHub" href="https://github.com/Adictes/bsIO">GitHub</a>
             </li>
         </ul>
-    </header>
+    </nav>
     <div class="container-fluid">
         <div class="row justify-content-md-center">
             <div class="col-4 border">
                 <form name="form" action="/login" method="post" onsubmit="return checkInput(this);">
                     <div class="form-group">
                         <label>Your username</label>
-                        <input class="form-control" name="username" type="text" placeholder="Username" value="{{.}}">
+                        <input class="form-control" name="username" type="text" placeholder="Username" maxlength="20" value="{{.}}" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Sign in</button>
                 </form>
             </div>
         </div>
     </div>
-    <footer> Made by Adictes </footer>
+    <footer class="bg-light"> Made by Adictes </footer>
     <script>
         function checkInput(form) {
             var un = form.username.value.trim();
-            if (un == "") {
-                alert("Пустое имя");
-                return false;
-            } else if (un.length >= 20) {
-                alert("Максимальная длина имени - 20 символов");
-                return false;
-            } else if (/[!@:;}{)(,?&^$#№<>%\. ]/.test(un)) {
+            if (/[!@:;}{)(,?&^$#№<>%\. ]/.test(un)) {
                 alert("Введены запрещенные символы");
                 return false;
             }
