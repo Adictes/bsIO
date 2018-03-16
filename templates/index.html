@@ -192,7 +192,7 @@
                 <p>Тут чат</p>
                 <div class="d-flex align-items-end border-left border-primary vsbl pl-1 mb-3 bg-light" id="output"></div>
                 <label class="mb-0" for="t_input">Ваше сообщение:</label>
-                <textarea class="form-control mb-1" id="t_input" maxlength="300"></textarea>
+                <textarea class="form-control mb-1" id="t_input" maxlength="300" onkeypress="keyPressed(event)"></textarea>
                 <button class="btn btn-primary" onclick="sendMessage()">Send</button>
                 <button class="float-right btn btn-outline-warning" onclick="clearMessage()">Clear</button>
             </div>

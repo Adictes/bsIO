@@ -188,17 +188,24 @@ var hm = new WebSocket("ws://localhost:8080/hm");
 hm.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
-    document.getElementById("output").innerText += data.Message;
+    document.getElementById("output").innerText += data.Name + ': ' + data.Message;
 }
 
 function sendMessage() {
     var message = document.getElementById("t_input").value + '\n';
 
-    document.getElementById("output").innerText += message;
+    document.getElementById("output").innerHTML += `Me: ${message}<br>`;
     hm.send(message);
 
     document.getElementById("t_input").value = "";
     document.getElementById("t_input").focus();
+}
+
+function keyPressed(event) {
+    var key = event.which;
+    if (key == 13) {
+        sendMessage();
+    }
 }
 
 function clearMessage() {

@@ -42,4 +42,5 @@ type ClearWrapper struct {
 // MessageWrapper sending with message from user
 type MessageWrapper struct {
 	Message string
+	Name    string
 }

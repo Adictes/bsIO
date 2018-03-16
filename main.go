@@ -22,8 +22,8 @@ var (
 	shots       map[string]*Field // Players shots
 	readyToPlay chan string       // User that ready to play
 	turn        map[string]chan bool
-	toSync      map[string]StrickenShips // map to synchronize StrickenShips
-	lastMessage map[string]chan string   // Map: username to message that he got
+	toSync      map[string]StrickenShips       // map to synchronize StrickenShips
+	lastMessage map[string]chan MessageWrapper // Map: username to message that he got
 )
 
 func init() {
@@ -35,7 +35,7 @@ func init() {
 	readyToPlay = make(chan string, 1)
 	turn = make(map[string]chan bool)
 	toSync = make(map[string]StrickenShips)
-	lastMessage = make(map[string]chan string)
+	lastMessage = make(map[string]chan MessageWrapper)
 
 	store.Options = &sessions.Options{
 		MaxAge:   86400 * 7,
@@ -81,7 +81,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	shots[session.Values["username"].(string)] = &Field{}
 	turn[session.Values["username"].(string)] = make(chan bool, 1)
 	toSync[session.Values["username"].(string)] = StrickenShips{}
-	lastMessage[session.Values["username"].(string)] = make(chan string, 1)
+	lastMessage[session.Values["username"].(string)] = make(chan MessageWrapper, 1)
 
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
@@ -420,7 +420,7 @@ func HandleMessage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		for {
 			select {
 			case msg := <-lastMessage[username]:
-				ws.WriteJSON(MessageWrapper{msg})
+				ws.WriteJSON(msg)
 			}
 		}
 	}()
@@ -432,10 +432,8 @@ func HandleMessage(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 			return
 		}
 
-		enemy := GetEnemy(curGames, username)
-		if enemy == "" {
-			continue
+		if enemy := GetEnemy(curGames, username); enemy != "" {
+			lastMessage[enemy] <- MessageWrapper{Message: string(msg), Name: username}
 		}
-		lastMessage[enemy] <- string(msg)
 	}
 }
