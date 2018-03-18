@@ -243,9 +243,8 @@ func (f *Field) print() {
 	fmt.Println("----------------------")
 }
 
-//RandomField returns a field with random spaced ships
-func RandomField() Field {
-	var tempField Field
+// GetRandomField returns a field with random spaced ships
+func GetRandomField() (temp Field) {
 	for len := 4; len >= 1; len-- { //цикл по длине кораблей
 		for k := len; k <= 4; k++ { //цикл по кол-ву кораблей
 			flag := true
@@ -265,7 +264,7 @@ func RandomField() Field {
 				//проверяем что наш корабль не пересекается с уже заданными
 				for i := col1 - 1; i <= col2+1; i++ {
 					for j := row1 - 1; j <= row2+1; j++ {
-						if tempField[j][i] == true {
+						if temp[j][i] == true {
 							flag = true
 						}
 					}
@@ -275,10 +274,10 @@ func RandomField() Field {
 			//заносим его в наш массив(поле):
 			for i := col1; i <= col2; i++ {
 				for j := row1; j <= row2; j++ {
-					tempField[j][i] = true
+					temp[j][i] = true
 				}
 			}
 		}
 	}
-	return tempField
+	return
 }

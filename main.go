@@ -319,7 +319,7 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		ws.WriteJSON(ClearWrapper{true})
 
 		fields[username] = &Field{}
-		randomField := RandomField()
+		randomField := GetRandomField()
 		for i := 1; i <= 10; i++ {
 			for j := 1; j <= 10; j++ {
 				if randomField[i][j] == true {
