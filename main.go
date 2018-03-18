@@ -318,44 +318,11 @@ func RandomFieldFilling(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 
 		ws.WriteJSON(ClearWrapper{true})
 
-		var tempField Field
 		fields[username] = &Field{}
-		for len := 4; len >= 1; len-- { //цикл по длине кораблей
-			for k := len; k <= 4; k++ { //цикл по кол-ву кораблей
-				flag := true
-				var row1, col1, row2, col2 uint8
-				for flag == true {
-					flag = false
-					row1 = uint8(rand.Int()%(10-len+1)) + 1
-					col1 = uint8(rand.Int()%(10-len+1)) + 1
-					if orientation := uint8(rand.Int() % 2); orientation == 1 {
-						col2 = col1 + uint8(len-1)
-						row2 = row1
-					} else {
-						row2 = row1 + uint8(len-1)
-						col2 = col1
-					}
-					//проверяем что наш корабль не пересекается с уже заданными
-					for i := col1 - 1; i <= col2+1; i++ {
-						for j := row1 - 1; j <= row2+1; j++ {
-							if tempField[j][i] == true {
-								flag = true
-							}
-						}
-					}
-				}
-				//если мы тут, значит корабль можно поставить
-				//заносим его в наш массив(поле):
-				for i := col1; i <= col2; i++ {
-					for j := row1; j <= row2; j++ {
-						tempField[j][i] = true
-					}
-				}
-			}
-		}
+		randomField := RandomField()
 		for i := 1; i <= 10; i++ {
 			for j := 1; j <= 10; j++ {
-				if tempField[i][j] == true {
+				if randomField[i][j] == true {
 					fields[username].IndicateCell(byte('0'+i-1), byte('0'+j-1))
 					ws.WriteJSON(CellWrapper{"h" + strconv.Itoa(i-1) + "-" + strconv.Itoa(j-1)})
 				}

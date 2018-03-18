@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 )
 
@@ -240,4 +241,44 @@ func (f *Field) print() {
 		fmt.Println()
 	}
 	fmt.Println("----------------------")
+}
+
+//RandomField returns a field with random spaced ships
+func RandomField() Field {
+	var tempField Field
+	for len := 4; len >= 1; len-- { //цикл по длине кораблей
+		for k := len; k <= 4; k++ { //цикл по кол-ву кораблей
+			flag := true
+			var row1, col1, row2, col2 int
+			for flag == true {
+				flag = false
+				orientation := rand.Int() % 2
+				row1 = rand.Int()%(10-(len-1)*(1-orientation)) + 1
+				col1 = rand.Int()%(10-(len-1)*orientation) + 1
+				if orientation == 1 {
+					col2 = col1 + len - 1
+					row2 = row1
+				} else {
+					row2 = row1 + len - 1
+					col2 = col1
+				}
+				//проверяем что наш корабль не пересекается с уже заданными
+				for i := col1 - 1; i <= col2+1; i++ {
+					for j := row1 - 1; j <= row2+1; j++ {
+						if tempField[j][i] == true {
+							flag = true
+						}
+					}
+				}
+			}
+			//если мы тут, значит корабль можно поставить
+			//заносим его в наш массив(поле):
+			for i := col1; i <= col2; i++ {
+				for j := row1; j <= row2; j++ {
+					tempField[j][i] = true
+				}
+			}
+		}
+	}
+	return tempField
 }
