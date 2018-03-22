@@ -30,6 +30,15 @@ function hit(cell) {
 
 var clr = new WebSocket("ws://localhost:8080/clr");
 
+clr.onmessage = function (event) {
+    var data = JSON.parse(event.data);
+
+    if (data.Leave != undefined) {
+        cleanAll();
+        alert('Твой противник вышел')
+    }
+}
+
 hes.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -83,6 +92,7 @@ hes.onmessage = function (event) {
 function cleanAll() {
     document.getElementById("turn").innerText = "Ждет";
     document.getElementById("eturn").innerText = "Ждет";
+    document.getElementById("ename").innerText = "Противник";
 
     if (document.getElementById("turn").classList.contains('badge-warning') !== true) {
         document.getElementById("turn").classList.remove('badge-success');
@@ -142,11 +152,11 @@ stg.onmessage = function (event) {
         document.getElementById("ename").innerText = data.Name;
     } else if (data.Turn != undefined) {
         if (data.Turn == true) {
-            document.getElementById("eturn").innerText = "Ждет";
+            document.getElementById("turn").innerText = "Ходит";
             document.getElementById("turn").classList.remove("badge-warning");
             document.getElementById("turn").classList.add("badge-success");
         } else {
-            document.getElementById("turn").innerText = "Ждет";
+            document.getElementById("eturn").innerText = "Ходит";
             document.getElementById("eturn").classList.remove("badge-warning");
             document.getElementById("eturn").classList.add("badge-success");
         }

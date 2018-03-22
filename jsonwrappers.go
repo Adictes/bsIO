@@ -44,3 +44,7 @@ type MessageWrapper struct {
 	Message string
 	Name    string
 }
+
+type LeaveWrapper struct {
+	Leave bool
+}

@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gorilla/context"
@@ -24,6 +25,8 @@ var (
 	turn        map[string]chan bool
 	toSync      map[string]StrickenShips       // map to synchronize StrickenShips
 	lastMessage map[string]chan MessageWrapper // Map: username to message that he got
+	leave       map[string]chan bool           // Map: username to leave status
+	mu          *sync.Mutex
 )
 
 func init() {
@@ -36,6 +39,8 @@ func init() {
 	turn = make(map[string]chan bool)
 	toSync = make(map[string]StrickenShips)
 	lastMessage = make(map[string]chan MessageWrapper)
+	leave = make(map[string]chan bool)
+	mu = &sync.Mutex{}
 
 	store.Options = &sessions.Options{
 		MaxAge:   86400 * 7,
@@ -82,6 +87,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	turn[session.Values["username"].(string)] = make(chan bool, 1)
 	toSync[session.Values["username"].(string)] = StrickenShips{}
 	lastMessage[session.Values["username"].(string)] = make(chan MessageWrapper, 1)
+	leave[session.Values["username"].(string)] = make(chan bool, 1)
 
 	t.ExecuteTemplate(w, "index", session.Values["username"])
 }
@@ -173,23 +179,35 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 	defer ws.Close()
 
-	for {
-		if <-turn[username] == false {
-			ws.WriteJSON(toSync[username])
-			ws.WriteJSON(TurnWrapper{false})
-			if as := fields[username].GetAvailableShips(); (as == Ships{4, 3, 2, 1}) {
-				ws.WriteJSON(WinWrapper{false})
+	canMove := false
+	go func() {
+		for {
+			if <-turn[username] == true {
+				mu.Lock()
+				ws.WriteJSON(toSync[username])
+				ws.WriteJSON(TurnWrapper{true})
+				canMove = true
+				mu.Unlock()
+			} else {
+				canMove = false
+				mu.Lock()
+				ws.WriteJSON(toSync[username])
+				ws.WriteJSON(TurnWrapper{false})
+				mu.Unlock()
+				if as := fields[username].GetAvailableShips(); (as == Ships{4, 3, 2, 1}) {
+					ws.WriteJSON(WinWrapper{false})
+				}
 			}
-			continue
 		}
-
-		ws.WriteJSON(toSync[username])
-		ws.WriteJSON(TurnWrapper{true})
-
+	}()
+	for {
 		_, msg, err := ws.ReadMessage()
 		if err != nil {
 			log.Println("Read message:", err)
 			return
+		}
+		if canMove == false {
+			continue
 		}
 
 		enemy := GetEnemy(curGames, username)
@@ -205,24 +223,32 @@ func HitEnemyShips(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 		// и записали эти изменения на его имя
 		shots[username].IndicateCell(msg[1], msg[3])
 		strickenShips := fields[enemy].GetStrickenShips(msg, username)
+		mu.Lock()
 		ws.WriteJSON(strickenShips)
+		mu.Unlock()
 		ChangeLetter(&strickenShips)
 		toSync[enemy] = strickenShips
 
 		if strickenShips.Hitted != "" {
 			as := fields[enemy].GetAvailableShips()
+			mu.Lock()
 			ws.WriteJSON(as)
+			mu.Unlock()
 			turn[enemy] <- false
 			if (as == Ships{4, 3, 2, 1}) {
 				ws.WriteJSON(WinWrapper{true})
 				continue
 			}
 			turn[username] <- true
+			mu.Lock()
 			ws.WriteJSON(TurnWrapper{true})
+			mu.Unlock()
 		} else {
 			turn[enemy] <- true
 			turn[username] <- false
+			mu.Lock()
 			ws.WriteJSON(TurnWrapper{false})
+			mu.Unlock()
 		}
 	}
 }
@@ -348,7 +374,27 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		http.Error(w, "Problems with upgrading to websocket connection. Please try again", http.StatusUpgradeRequired)
 		return
 	}
-	defer ws.Close()
+	// If player disconnected
+	defer func() {
+		ws.Close()
+		log.Printf("User: %v disconnected\n", username)
+		enemy := GetEnemy(curGames, username)
+		leave[enemy] <- true // дисконект устраиваю я, но пишу в enemy для последующей простоты
+		cleanAll(enemy)
+		cleanAll(username)
+	}()
+
+	// If enemy disconnected - notify player
+	go func() {
+		for {
+			select {
+			case <-leave[username]:
+				ws.WriteJSON(LeaveWrapper{true})
+			default:
+				time.Sleep(7 * time.Second)
+			}
+		}
+	}()
 
 	for {
 		_, _, err := ws.ReadMessage()
@@ -356,12 +402,15 @@ func CleanAll(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			log.Println("Read message:", err)
 			return
 		}
-
-		delete(curGames, username)
-		fields[username] = &Field{}
-		shots[username] = &Field{}
-		toSync[username] = StrickenShips{}
+		cleanAll(username)
 	}
+}
+
+func cleanAll(user string) {
+	delete(curGames, user)
+	fields[user] = &Field{}
+	shots[user] = &Field{}
+	toSync[user] = StrickenShips{}
 }
 
 // HandleMessage retranslated message to another player
