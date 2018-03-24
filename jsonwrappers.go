@@ -45,6 +45,7 @@ type MessageWrapper struct {
 	Name    string
 }
 
+// LeaveWrapper is sending when somebody leaves
 type LeaveWrapper struct {
 	Leave bool
 }
